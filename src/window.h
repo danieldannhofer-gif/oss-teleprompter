@@ -33,4 +33,8 @@ private:
     static inline HWND handle_ = nullptr;
 };
 
+void setOverlay(HWND hwnd, bool enabled);
+void setClickThrough(HWND hwnd, bool enabled);
+void setAlwaysOnTop(HWND hwnd, bool enabled);
+
 }  // namespace teleprompter

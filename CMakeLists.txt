@@ -21,9 +21,11 @@ add_executable(Teleprompter
     src/main.cpp
     src/window.cpp
     src/webview.cpp
+    src/ipc.cpp
 )
 
 target_include_directories(Teleprompter PRIVATE ${WEBVIEW2_SDK})
+target_include_directories(Teleprompter SYSTEM PRIVATE third_party/nlohmann_json/single_include)
 
 target_link_libraries(Teleprompter PRIVATE
     WebView2LoaderStatic

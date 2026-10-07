@@ -73,4 +73,50 @@ HWND Window::handle() {
     return handle_;
 }
 
+void setOverlay(HWND hwnd, bool enabled) {
+#ifdef _WIN32
+    if (enabled) {
+        SetWindowLongW(hwnd, GWL_EXSTYLE,
+                       GetWindowLongW(hwnd, GWL_EXSTYLE) | WS_EX_LAYERED | WS_EX_TOPMOST);
+        SetLayeredWindowAttributes(hwnd, RGB(0, 0, 0), 200, LWA_ALPHA);
+        SetWindowLongW(hwnd, GWL_STYLE,
+                       GetWindowLongW(hwnd, GWL_STYLE) & ~WS_CAPTION & ~WS_THICKFRAME);
+    } else {
+        SetWindowLongW(hwnd, GWL_EXSTYLE,
+                       GetWindowLongW(hwnd, GWL_EXSTYLE) & ~WS_EX_LAYERED & ~WS_EX_TOPMOST);
+        SetWindowLongW(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+    }
+    SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+                 SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE);
+#else
+    (void)hwnd;
+    (void)enabled;
+#endif
+}
+
+void setClickThrough(HWND hwnd, bool enabled) {
+#ifdef _WIN32
+    LONG exStyle = GetWindowLongW(hwnd, GWL_EXSTYLE);
+    if (enabled) {
+        SetWindowLongW(hwnd, GWL_EXSTYLE,
+                       exStyle | WS_EX_TRANSPARENT | WS_EX_LAYERED);
+    } else {
+        SetWindowLongW(hwnd, GWL_EXSTYLE, exStyle & ~WS_EX_TRANSPARENT);
+    }
+#else
+    (void)hwnd;
+    (void)enabled;
+#endif
+}
+
+void setAlwaysOnTop(HWND hwnd, bool enabled) {
+#ifdef _WIN32
+    SetWindowPos(hwnd, enabled ? HWND_TOPMOST : HWND_NOTOPMOST,
+                 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
+#else
+    (void)hwnd;
+    (void)enabled;
+#endif
+}
+
 }  // namespace teleprompter

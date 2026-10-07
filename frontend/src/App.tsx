@@ -1,29 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useOverlay } from './hooks/useOverlay'
 import './App.css'
 
 function App() {
-  const [backendReady, setBackendReady] = useState(false)
-
-  useEffect(() => {
-    const w = window as unknown as {
-      chrome?: {
-        webview?: {
-          addEventListener: (t: string, l: () => void) => void
-          postMessage: (m: string) => void
-        }
-      }
-    }
-    const webview = w.chrome?.webview
-    if (webview) {
-      webview.addEventListener('message', () => setBackendReady(true))
-      webview.postMessage(JSON.stringify({ type: 'frontend:ready' }))
-    }
-  }, [])
+  const { overlay, clickThrough, alwaysOnTop, toggleOverlay, toggleClickThrough, toggleAlwaysOnTop } =
+    useOverlay()
 
   return (
     <main className="prompter">
       <h1>Teleprompter</h1>
-      <p>{backendReady ? 'Connected to native host' : 'Standalone dev mode'}</p>
+      <div className="controls">
+        <button type="button" onClick={toggleOverlay}>
+          Overlay: {overlay ? 'on' : 'off'}
+        </button>
+        <button type="button" onClick={toggleClickThrough}>
+          Click-through: {clickThrough ? 'on' : 'off'}
+        </button>
+        <button type="button" onClick={toggleAlwaysOnTop}>
+          Always on top: {alwaysOnTop ? 'on' : 'off'}
+        </button>
+      </div>
     </main>
   )
 }
