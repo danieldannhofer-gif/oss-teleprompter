@@ -28,6 +28,8 @@ add_library(teleprompter_core STATIC
     src/speech/audio.cpp
     src/speech/model.cpp
     src/speech/recognizer.cpp
+    src/script/matcher.cpp
+    src/utils/string_utils.cpp
 )
 target_include_directories(teleprompter_core PUBLIC src)
 
@@ -58,3 +60,12 @@ target_link_libraries(audio_test PRIVATE teleprompter_core)
 
 add_executable(recognizer_test tests/cpp/recognizer_test.cpp)
 target_link_libraries(recognizer_test PRIVATE teleprompter_core)
+
+add_executable(string_utils_test tests/cpp/string_utils_test.cpp)
+target_link_libraries(string_utils_test PRIVATE teleprompter_core)
+
+add_executable(matcher_test tests/cpp/matcher_test.cpp)
+target_link_libraries(matcher_test PRIVATE teleprompter_core)
+
+add_test(NAME string_utils_test COMMAND string_utils_test)
+add_test(NAME matcher_test COMMAND matcher_test)

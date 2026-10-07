@@ -4,6 +4,7 @@
 
 #include <nlohmann/json.hpp>
 
+#include "script/matcher.h"
 #include "speech/recognizer.h"
 #include "webview.h"
 #include "window.h"
@@ -14,6 +15,8 @@ namespace {
 
 Recognizer g_recognizer;
 std::string g_model_path = "models/ggml-base.bin";
+Matcher* g_matcher = nullptr;
+std::vector<std::string> g_script_lines;
 
 void emitTranscript(const std::string& text, bool isFinal) {
     nlohmann::json event{{"type", "speech:transcript"}, {"text", text}, {"isFinal", isFinal}};
@@ -48,6 +51,24 @@ void dispatch(const nlohmann::json& msg) {
         g_recognizer.setLanguage(msg.value("language", std::string()));
     } else if (type == "speech:setModel") {
         g_model_path = msg.value("path", g_model_path);
+    } else if (type == "script:load") {
+        g_script_lines = msg.value("lines", std::vector<std::string>{});
+        delete g_matcher;
+        g_matcher = new Matcher(g_script_lines);
+    } else if (type == "script:match") {
+        if (!g_matcher) {
+            nlohmann::json err{{"type", "script:matchResult"},
+                              {"error", "no script loaded"}};
+            webviewPostMessage(err.dump().c_str());
+            return;
+        }
+        MatchResult result = g_matcher->match(msg.value("text", std::string()));
+        nlohmann::json reply{
+            {"type", "script:matchResult"},
+            {"matchType", result.type == MatchType::OnScript ? "onScript" : "offScript"},
+            {"lineIndex", result.lineIndex},
+            {"confidence", result.confidence}};
+        webviewPostMessage(reply.dump().c_str());
     }
 }
 
