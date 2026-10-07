@@ -26,9 +26,18 @@ add_executable(Teleprompter
 
 add_library(teleprompter_core STATIC
     src/speech/audio.cpp
+    src/speech/model.cpp
+    src/speech/recognizer.cpp
 )
 target_include_directories(teleprompter_core PUBLIC src)
-target_compile_definitions(teleprompter_core PUBLIC $<$<BOOL:${WIN32}>:TELEPROMPTER_WIN32>)
+
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/third_party/whisper.cpp/CMakeLists.txt)
+    set(WHISPER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+    set(WHISPER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+    add_subdirectory(third_party/whisper.cpp)
+    target_link_libraries(teleprompter_core PUBLIC whisper)
+endif()
 
 target_include_directories(Teleprompter PRIVATE ${WEBVIEW2_SDK})
 target_include_directories(Teleprompter SYSTEM PRIVATE third_party/nlohmann_json/single_include)
@@ -46,3 +55,6 @@ enable_testing()
 
 add_executable(audio_test tests/cpp/audio_test.cpp)
 target_link_libraries(audio_test PRIVATE teleprompter_core)
+
+add_executable(recognizer_test tests/cpp/recognizer_test.cpp)
+target_link_libraries(recognizer_test PRIVATE teleprompter_core)

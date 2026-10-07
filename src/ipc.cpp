@@ -4,12 +4,25 @@
 
 #include <nlohmann/json.hpp>
 
+#include "speech/recognizer.h"
 #include "webview.h"
 #include "window.h"
 
 namespace teleprompter {
 
 namespace {
+
+Recognizer g_recognizer;
+std::string g_model_path = "models/ggml-base.bin";
+
+void emitTranscript(const std::string& text, bool isFinal) {
+    nlohmann::json event{{"type", "speech:transcript"}, {"text", text}, {"isFinal", isFinal}};
+    webviewPostMessage(event.dump().c_str());
+}
+
+void ensureRecognizerCallbacks() {
+    g_recognizer.setTranscriptCallback([](const Transcript& t) { emitTranscript(t.text, t.isFinal); });
+}
 
 void dispatch(const nlohmann::json& msg) {
     if (!msg.contains("type") || !msg["type"].is_string()) {
@@ -24,6 +37,17 @@ void dispatch(const nlohmann::json& msg) {
         setClickThrough(Window::handle(), enabled);
     } else if (type == "overlay:alwaysOnTop") {
         setAlwaysOnTop(Window::handle(), enabled);
+    } else if (type == "speech:start") {
+        ensureRecognizerCallbacks();
+        if (!g_recognizer.start(g_model_path)) {
+            emitTranscript("error: failed to start recognizer (model missing?)", true);
+        }
+    } else if (type == "speech:stop") {
+        g_recognizer.stop();
+    } else if (type == "speech:setLanguage") {
+        g_recognizer.setLanguage(msg.value("language", std::string()));
+    } else if (type == "speech:setModel") {
+        g_model_path = msg.value("path", g_model_path);
     }
 }
 
