@@ -24,6 +24,12 @@ add_executable(Teleprompter
     src/ipc.cpp
 )
 
+add_library(teleprompter_core STATIC
+    src/speech/audio.cpp
+)
+target_include_directories(teleprompter_core PUBLIC src)
+target_compile_definitions(teleprompter_core PUBLIC $<$<BOOL:${WIN32}>:TELEPROMPTER_WIN32>)
+
 target_include_directories(Teleprompter PRIVATE ${WEBVIEW2_SDK})
 target_include_directories(Teleprompter SYSTEM PRIVATE third_party/nlohmann_json/single_include)
 
@@ -36,4 +42,7 @@ target_link_libraries(Teleprompter PRIVATE
 
 # Whisper.cpp is added in Task 4 (third_party/whisper.cpp submodule).
 
-# Frontend build output is embedded/copy step, wired in Task 13 (installer).
+enable_testing()
+
+add_executable(audio_test tests/cpp/audio_test.cpp)
+target_link_libraries(audio_test PRIVATE teleprompter_core)
