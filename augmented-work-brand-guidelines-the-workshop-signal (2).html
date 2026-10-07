@@ -1,0 +1,1199 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Augmented Work — Brand Guidelines · The Workshop Signal</title>
+<style>
+  :root {
+    --paper: #f4f1e8;
+    --paper-2: #ede8db;
+    --ink: #1a1a1a;
+    --ink-2: #2e2e2e;
+    --green: #2ecc71;
+    --green-dark: #0a2a14;
+    --coral: #e07a5f;
+    --blueprint: #3d5a80;
+    --grey: #8a8a8a;
+    --grey-line: #d4cfc2;
+    --serif: Georgia, 'Times New Roman', 'Droid Serif', serif;
+    --sans: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --hand: 'Bradley Hand', 'Segoe Script', 'Comic Sans MS', cursive;
+    --mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: var(--sans);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- Cover ---- */
+  .cover {
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    text-align: center;
+    background: var(--paper);
+    padding: 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(46,204,113,0.06) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(224,122,95,0.05) 0%, transparent 40%);
+  }
+  .cover-inner { position: relative; z-index: 1; }
+  .cover .kicker {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--grey);
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: var(--serif); font-size: clamp(44px, 8vw, 88px); font-weight: 700;
+    letter-spacing: -0.03em; line-height: 1.0; margin-bottom: 16px;
+  }
+  .cover h1 .accent { color: var(--green); }
+  .cover .sub {
+    font-family: var(--hand); font-size: 28px; color: var(--coral);
+    margin-bottom: 40px;
+  }
+  .cover .meta {
+    font-size: 13px; color: var(--grey); font-family: var(--mono);
+    letter-spacing: 0.05em;
+  }
+  .cover .meta span { display: block; margin-bottom: 4px; }
+
+  /* ---- Sticky Nav ---- */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244,241,232,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--grey-line);
+    padding: 10px 28px;
+    display: flex; align-items: center; gap: 6px;
+    overflow-x: auto;
+  }
+  .nav .brand {
+    font-family: var(--serif); font-weight: 700; font-size: 14px;
+    margin-right: auto; white-space: nowrap;
+  }
+  .nav a {
+    font-size: 12px; font-weight: 600; color: var(--grey); text-decoration: none;
+    padding: 6px 12px; border-radius: 8px; transition: all .2s;
+    border: none; background: transparent; cursor: pointer; white-space: nowrap;
+    font-family: var(--sans);
+  }
+  .nav a:hover { color: var(--ink); background: rgba(0,0,0,0.05); }
+  .nav a.active { color: var(--ink); background: rgba(46,204,113,0.15); }
+
+  /* ---- Sections ---- */
+  .section {
+    max-width: 900px; margin: 0 auto;
+    padding: 80px 28px;
+    border-bottom: 1px solid var(--grey-line);
+    scroll-margin-top: 56px;
+  }
+  .section-label {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--green);
+    margin-bottom: 12px;
+  }
+  .section h2 {
+    font-family: var(--serif); font-size: clamp(28px, 4vw, 40px); font-weight: 700;
+    letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 20px;
+  }
+  .section p.lede {
+    font-size: 17px; color: var(--ink-2); max-width: 640px; margin-bottom: 32px;
+  }
+  .section p.body { font-size: 15px; color: var(--ink-2); margin-bottom: 16px; max-width: 640px; }
+
+  /* ---- Cards ---- */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
+  .card {
+    background: #fff;
+    border: 1px solid var(--grey-line);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .card .h {
+    font-family: var(--serif); font-size: 18px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .card .t { font-size: 14px; color: var(--grey); line-height: 1.55; }
+  .card .num {
+    font-family: var(--mono); font-size: 11px; font-weight: 700;
+    color: var(--green); margin-bottom: 10px; letter-spacing: 0.05em;
+  }
+
+  /* ---- Color blocks ---- */
+  .color-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 28px; }
+  .color-chip {
+    flex: 1; min-width: 140px;
+    border-radius: 16px; padding: 24px;
+    min-height: 180px; display: flex; flex-direction: column; justify-content: flex-end;
+    border: 1px solid var(--grey-line);
+  }
+  .color-chip .cname { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .color-chip .chex { font-family: var(--mono); font-size: 12px; opacity: 0.7; margin-bottom: 8px; }
+  .color-chip .cuse { font-size: 12px; line-height: 1.4; opacity: 0.85; }
+
+  /* ---- Logo demo ---- */
+  .logo-demo {
+    background: #fff; border: 1px solid var(--grey-line); border-radius: 16px;
+    padding: 48px; display: flex; flex-direction: column; align-items: center; gap: 32px;
+    margin-bottom: 24px;
+  }
+  .logo-demo .lg-row { display: flex; align-items: center; gap: 16px; }
+  .logo-demo .lg-mark { width: 56px; height: 56px; flex-shrink: 0; }
+  .logo-demo .lg-word { font-family: var(--serif); font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .logo-demo .lg-word .light { font-weight: 400; color: var(--grey); }
+  .logo-demo .variant-label {
+    font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--grey); margin-top: -16px;
+  }
+
+  .logo-dark { background: var(--ink); }
+  .logo-dark .lg-word { color: var(--paper); }
+  .logo-dark .lg-word .light { color: var(--grey); }
+  .logo-green { background: var(--green); }
+
+  /* ---- Do / Dont ---- */
+  .do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+  .dd-card {
+    border-radius: 14px; padding: 20px; border: 2px solid;
+  }
+  .dd-do { border-color: var(--green); background: rgba(46,204,113,0.05); }
+  .dd-dont { border-color: var(--coral); background: rgba(224,122,95,0.05); }
+  .dd-card .dd-h { font-weight: 700; font-size: 13px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .dd-do .dd-h { color: #1a8a4a; }
+  .dd-dont .dd-h { color: #c05a3f; }
+  .dd-card ul { list-style: none; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+  .dd-card ul li { padding-left: 18px; position: relative; margin-bottom: 6px; }
+  .dd-do li::before { content: '\2713'; position: absolute; left: 0; color: var(--green); font-weight: 700; }
+  .dd-dont li::before { content: '\2717'; position: absolute; left: 0; color: var(--coral); font-weight: 700; }
+
+  /* ---- Type scale ---- */
+  .type-scale { margin-bottom: 16px; }
+  .type-row {
+    display: flex; align-items: baseline; gap: 20px;
+    padding: 20px 0; border-bottom: 1px solid var(--grey-line);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-row .tmeta {
+    font-family: var(--mono); font-size: 10px; color: var(--grey);
+    width: 120px; flex-shrink: 0; text-transform: uppercase; letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+  .type-row .tsample { flex: 1; }
+
+  /* ---- Voice table ---- */
+  .voice-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  .voice-table th, .voice-table td {
+    text-align: left; padding: 14px 16px; border-bottom: 1px solid var(--grey-line);
+    font-size: 14px;
+  }
+  .voice-table th { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--grey); }
+  .voice-table td { color: var(--ink-2); }
+
+  /* ---- Application mock ---- */
+  .app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 16px; margin-bottom: 24px; }
+  .app-card {
+    border: 1px solid var(--grey-line); border-radius: 16px; overflow: hidden;
+    background: #fff;
+  }
+  .app-card .preview { height: 180px; display: flex; align-items: center; justify-content: center; }
+  .app-card .meta { padding: 16px 20px; }
+  .app-card .meta .title { font-family: var(--serif); font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .app-card .meta .desc { font-size: 12px; color: var(--grey); line-height: 1.5; }
+
+  /* ---- Quote ---- */
+  .quote {
+    font-family: var(--serif); font-style: italic; font-size: 22px;
+    line-height: 1.4; color: var(--ink); padding: 24px 0;
+    border-left: 4px solid var(--green); padding-left: 24px;
+    margin: 24px 0;
+  }
+
+  /* ---- Hand annotation ---- */
+  .hand-note {
+    font-family: var(--hand); font-size: 18px; color: var(--coral);
+    transform: rotate(-2deg); display: inline-block; margin: 8px 0;
+  }
+
+  /* ---- Tag ---- */
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 4px 10px; border-radius: 100px; margin: 2px;
+  }
+  .tag-green { background: rgba(46,204,113,0.15); color: #1a8a4a; }
+  .tag-coral { background: rgba(224,122,95,0.15); color: #c05a3f; }
+  .tag-ink { background: rgba(26,26,26,0.08); color: var(--ink); }
+  .tag-blue { background: rgba(61,90,128,0.15); color: var(--blueprint); }
+
+  /* ---- Clear space ---- */
+  .clearspace {
+    background: #fff; border: 1px solid var(--grey-line); border-radius: 14px;
+    padding: 40px; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+  }
+  .clearspace-inner {
+    border: 2px dashed var(--green); padding: 24px; border-radius: 12px;
+    display: flex; align-items: center; gap: 16px;
+  }
+  .clearspace .x {
+    position: absolute; font-family: var(--mono); font-size: 11px; color: var(--green); font-weight: 700;
+  }
+
+  /* ---- Pattern strip ---- */
+  .pattern-strip {
+    display: flex; gap: 0; height: 80px; border-radius: 14px; overflow: hidden; margin-bottom: 16px;
+  }
+  .pattern-strip > div { flex: 1; display: flex; align-items: center; justify-content: center; }
+
+  footer.end {
+    text-align: center; padding: 60px 28px; color: var(--grey); font-size: 13px;
+    background: var(--ink); color: var(--grey);
+  }
+  footer.end strong { color: var(--paper); font-family: var(--serif); }
+
+  @media (max-width: 640px) {
+    .section { padding: 60px 22px; }
+    .do-dont { grid-template-columns: 1fr; }
+    .color-chip { min-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<section class="cover">
+  <div class="cover-inner">
+    <div class="kicker">Brand Guidelines — Version 1.0</div>
+    <h1>Augmented<br><span class="accent">Work</span></h1>
+    <div class="sub">The Workshop Signal</div>
+    <div class="meta">
+      <span>Markenidentitaet — taktil, ehrlich, handgemacht</span>
+      <span>Erstellt: August 2026 · Daniel Dannhofer</span>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== NAV ==================== -->
+<nav class="nav">
+  <span class="brand">Augmented Work</span>
+  <a class="nav-btn active" data-t="essence">Essenz</a>
+  <a class="nav-btn" data-t="voice">Stimme</a>
+  <a class="nav-btn" data-t="logo">Logo</a>
+  <a class="nav-btn" data-t="color">Farbe</a>
+  <a class="nav-btn" data-t="type">Typo</a>
+  <a class="nav-btn" data-t="pattern">Bildelemente</a>
+  <a class="nav-btn" data-t="imagery">Bildsprache</a>
+  <a class="nav-btn" data-t="apps">Anwendung</a>
+  <a class="nav-btn" data-t="rules">Dos & Donts</a>
+</nav>
+
+<!-- ==================== 1. ESSENZ ==================== -->
+<section class="section" id="essence">
+  <div class="section-label">01 — Markenessenz</div>
+  <h2>Wir bauen zusammen.<br>Echt, nicht generiert.</h2>
+  <p class="lede">Augmented Work ist die Werkstatt, nicht das Labor. Wir glauben an Hands-on-Arbeit, an Flipcharts, an gemeinsames Denken — und an kluge Werkzeuge, die das Moegliche erweitern, ohne den Menschen zu ersetzen.</p>
+
+  <div class="quote">"Technologie soll erweitern, nicht ersetzen. Wir bringen die KI in den Raum — aber der Mensch fuehrt."</div>
+
+  <div class="section-label" style="margin-top:40px">Mission</div>
+  <p class="body">Wir helfen Unternehmen, KI und Automatisierung pragmatisch in ihre Arbeit einzubauen — durch Workshops, Praesentationen und konkrete Umsetzung. Keine Hype, keine Blackbox. Sondern Handwerk, das man anfassen kann.</p>
+
+  <div class="section-label" style="margin-top:32px">Vision</div>
+  <p class="body">Eine Arbeitswelt, in der KI selbstverstaendlich ist wie der Bleistift auf dem Tisch: ein Werkzeug, das jeder versteht und niemand fuerchtet.</p>
+
+  <div class="section-label" style="margin-top:32px">Werte</div>
+  <div class="cards">
+    <div class="card">
+      <div class="num">01</div>
+      <div class="h">Hands-on</div>
+      <div class="t">Wir reden nicht ueber Dinge. Wir machen sie. Jeder Workshop endet mit einem Ergebnis, nicht mit einem Protokoll.</div>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <div class="h">Ehrlichkeit</div>
+      <div class="t">Was funktioniert, sagen wir. Was nicht funktioniert, auch. Keine Buzzwords, keine heimlichen Abstriche.</div>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <div class="h">Kollaboration</div>
+      <div class="t">NIEMALS einsam am Rechner. Immer mit dem Kunden im Raum, am Tisch, am Flipchart. Gemeinsam ist besser.</div>
+    </div>
+    <div class="card">
+      <div class="num">04</div>
+      <div class="h">Machen-Spass</div>
+      <div class="t">Arbeit darf Freude machen. Workshop-Stimmung, nicht Beinhaus-Stimmung. Locker, aber niemals oberflaechlich.</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:32px">Markenpersoenlichkeit</div>
+  <div class="cards">
+    <div class="card">
+      <div class="h" style="color:var(--green)">Wir sind</div>
+      <div class="t">
+        <span class="tag tag-green">handgemacht</span>
+        <span class="tag tag-green">direkt</span>
+        <span class="tag tag-green">pragmatisch</span>
+        <span class="tag tag-green">warm</span>
+        <span class="tag tag-green">neugierig</span>
+        <span class="tag tag-green">bodenständig</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="h" style="color:var(--coral)">Wir sind nicht</div>
+      <div class="t">
+        <span class="tag tag-coral">kühl</span>
+        <span class="tag tag-coral">abstrakt</span>
+        <span class="tag tag-coral">buzzword-verliebt</span>
+        <span class="tag tag-coral">steril</span>
+        <span class="tag tag-coral">distanziert</span>
+        <span class="tag tag-coral">blackbox</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 2. STIMME ==================== -->
+<section class="section" id="voice">
+  <div class="section-label">02 — Stimme & Tonalitaet</div>
+  <h2>Wie wir klingen</h2>
+  <p class="lede">Unsere Stimme ist wie ein guter Workshop-Moderator: locker, aber kompetent. Einladend, aber nicht albern. Direkt, aber nicht unhoflich. Wir sprechen wie mit einem Freund am Kaffeetisch — nur dass wir gerade KI-Architektur erklaeren.</p>
+
+  <table class="voice-table">
+    <thead>
+      <tr><th>Regel</th><th>So klingt's</th><th>Nicht so</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Saetze</td>
+        <td>Kurz, aktiv, ein Gedanke pro Satz.</td>
+        <td>Schachtelsaetze, Passivkonstruktionen, acht Nebensaetze.</td>
+      </tr>
+      <tr>
+        <td>Wortwahl</td>
+        <td>Alltagssprache, konkrete Beispiele, "stell dir vor..."</td>
+        <td>Fachjargon, Buzzwords, "synergetische Agilitaet"</td>
+      </tr>
+      <tr>
+        <td>Pronomen</td>
+        <td>"Wir", "du", "lasst uns" — nie "man" oder "die Firma"</td>
+        <td>Passiv, "es wird davon ausgegangen"</td>
+      </tr>
+      <tr>
+        <td>Humor</td>
+        <td>Trocken, selbstbewusst, nie laecherlich. Ein Witz pro Slide max.</td>
+        <td>Zwanghaft, peinlich, Meme-Overload</td>
+      </tr>
+      <tr>
+        <td>Technik</td>
+        <td>Erklaeren wie einem Freund, Metaphern aus dem Alltag.</td>
+        <td>Wiki-Artikel-Stil, Definitionen ohne Kontext.</td>
+      </tr>
+      <tr>
+        <td>Behauptungen</td>
+        <td>Behaupten + Beweisen. Zeigen, nicht nur sagen.</td>
+        <td>Leere Superlative, "innovativste Loesung"</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="section-label">Beispielsaetze</div>
+  <div class="cards">
+    <div class="card" style="border-left: 4px solid var(--green)">
+      <div class="t" style="font-size:15px">"Stell dir vor, dein Posteingang sortiert sich selbst. Genau das bauen wir heute."</div>
+      <div class="hand-note" style="margin-top:8px">gut!</div>
+    </div>
+    <div class="card" style="border-left: 4px solid var(--coral)">
+      <div class="t" style="font-size:15px">"Durch den Einsatz innovativer KI-Technologologie optimieren wir synergistisch Ihre Workflows."</div>
+      <div class="hand-note" style="margin-top:8px">nein.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 3. LOGO ==================== -->
+<section class="section" id="logo">
+  <div class="section-label">03 — Logo-System</div>
+  <h2>Das Logo</h2>
+  <p class="lede">Das Logo ist eine Handskizze, kein Pixelkunstwerk. Der Bogen ueber dem Punkt symbolisiert den "Augmented"-Gedanken: der Mensch ist die Mitte, die Technologie wuerdigt ihn ein. Bewusst unperfekt, bewusst handgemacht.</p>
+
+  <div class="logo-demo">
+    <div class="variant-label">Primarlogo — auf Hell</div>
+    <div class="lg-row">
+      <svg class="lg-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M10 36 Q24 12 38 36" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="24" cy="22" r="5" fill="#2ecc71"/>
+        <path d="M18 38 L30 38" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span class="lg-word">augmented<span class="light"> work</span></span>
+    </div>
+  </div>
+
+  <div class="logo-demo logo-dark">
+    <div class="variant-label" style="color:var(--grey)">Primarlogo — auf Dunkel</div>
+    <div class="lg-row">
+      <svg class="lg-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M10 36 Q24 12 38 36" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="24" cy="22" r="5" fill="#2ecc71"/>
+        <path d="M18 38 L30 38" stroke="#f4f1e8" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span class="lg-word">augmented<span class="light"> work</span></span>
+    </div>
+  </div>
+
+  <div class="logo-demo logo-green">
+    <div class="variant-label" style="color:#0a2a14">Variante — Gruen als Hintergrund</div>
+    <div class="lg-row">
+      <svg class="lg-mark" viewBox="0 0 48 48" fill="none">
+        <path d="M10 36 Q24 12 38 36" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="24" cy="22" r="5" fill="#1a1a1a"/>
+        <path d="M18 38 L30 38" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span class="lg-word" style="color:#1a1a1a">augmented<span class="light" style="color:#0a2a14"> work</span></span>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:32px">Freiflaeche</div>
+  <p class="body">Rund um das Logo mindestens die Hoehe des Punktes als Abstand freihalten. Das Logo braucht Platz zum Atmen — wie auf einer Flipchart-Seite.</p>
+  <div class="clearspace">
+    <div class="clearspace-inner">
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+        <path d="M10 36 Q24 12 38 36" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+        <circle cx="24" cy="22" r="5" fill="#2ecc71"/>
+        <path d="M18 38 L30 38" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round"/>
+      </svg>
+      <span style="font-family:var(--serif);font-size:22px;font-weight:700">augmented<span style="font-weight:400;color:var(--grey)"> work</span></span>
+    </div>
+  </div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--green);text-align:center;margin-bottom:24px">x = Hoehe des Punktes im Markenzeichen</div>
+
+  <div class="section-label">Mindestgroesse</div>
+  <p class="body">Print: Marke min. 24mm breit. Digital: Marke min. 32px breit. Darunter verliert die Handskizze ihre Wirkung.</p>
+
+  <div class="section-label" style="margin-top:40px">AW Monogramm</div>
+  <p class="body">Das "AW"-Monogramm ist die minimale Form der Marke — fuer Signaturen, Favicons, Stempel, kleine Platzierungen wo das Volllogo zu gross waere. Zwei Buchstaben in derselben Serif-Schrift wie das Volllogo-Wordmark: "AW" in Georgia/Fraunces, fett, mit leicht negativem Letter-Spacing. Kein SVG-Konstrukt, sondern Typografie — konsistent mit dem Schriftbild der Marke.</p>
+
+  <div class="logo-demo" style="flex-direction:column;gap:32px;padding:48px">
+    <!-- Variante 1: Ink auf Paper -->
+    <div style="text-align:center">
+      <div class="variant-label" style="margin-bottom:12px">Variante A — Ink auf Paper</div>
+      <div style="font-family:var(--serif);font-weight:700;font-size:64px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">A<span style="color:var(--green)">W</span></div>
+    </div>
+
+    <!-- Variante 2: Paper auf Ink -->
+    <div style="text-align:center;background:var(--ink);border-radius:14px;padding:24px 0">
+      <div class="variant-label" style="color:var(--grey);margin-bottom:12px">Variante B — Paper auf Ink</div>
+      <div style="font-family:var(--serif);font-weight:700;font-size:64px;letter-spacing:-0.04em;line-height:1;color:var(--paper)">A<span style="color:var(--green)">W</span></div>
+    </div>
+
+    <!-- Variante 3: Gruen auf Paper -->
+    <div style="text-align:center">
+      <div class="variant-label" style="margin-bottom:12px">Variante C — Gruen auf Paper (Signal)</div>
+      <div style="font-family:var(--serif);font-weight:700;font-size:64px;letter-spacing:-0.04em;line-height:1;color:var(--green)">A<span style="color:var(--ink)">W</span></div>
+    </div>
+
+    <!-- Variante 4: Beide Ink, Gruen als Querstrich-Akzent -->
+    <div style="text-align:center">
+      <div class="variant-label" style="margin-bottom:12px">Variante D — Ink mit gruener Trennlinie</div>
+      <div style="font-family:var(--serif);font-weight:700;font-size:64px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">A<span style="color:var(--green);font-weight:400;margin:0 -2px">/</span>W</div>
+    </div>
+
+    <!-- Groessen -->
+    <div style="text-align:center;border-top:1px solid var(--grey-line);padding-top:24px;width:100%">
+      <div class="variant-label" style="margin-bottom:12px">Groessen</div>
+      <div style="display:flex;justify-content:center;align-items:flex-end;gap:32px;flex-wrap:wrap">
+        <div style="text-align:center">
+          <div style="font-family:var(--serif);font-weight:700;font-size:48px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">AW</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">48px</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-family:var(--serif);font-weight:700;font-size:32px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">AW</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">32px</div>
+        </div>
+        <div style="text-align:center">
+          <div style="font-family:var(--serif);font-weight:700;font-size:16px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">AW</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">16px</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Konstruktion</div>
+  <p class="body">Das Monogramm ist reine Typografie — Georgia oder Fraunces, 700 weight, Letter-Spacing -0.04em. Genau dieselbe Schrift wie das Wordmark "augmented work" im Volllogo. Das A steht in Ink, das W kann entweder ebenfalls in Ink sein oder als gruener Akzent das Signal setzen. Bei Groessen unter 20px empfiehlt sich beide Buchstaben in Ink ohne den gruene Akzent, um lesbar zu bleiben.</p>
+
+  <div class="clearspace" style="padding:24px;margin-bottom:8px">
+    <div style="display:flex;align-items:center;justify-content:center;gap:0">
+      <div style="position:relative;text-align:center">
+        <div style="font-family:var(--serif);font-weight:700;font-size:48px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">A<span style="color:var(--green)">W</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="font-family:var(--mono);font-size:11px;color:var(--green);text-align:center;margin-bottom:24px">Letter-Spacing: -0.04em · Font-Weight: 700 · Gleiches Font-Stack wie Wordmark</div>
+
+  <div class="section-label">Einsatz: E-Mail-Signatur</div>
+  <p class="body">Das Monogramm eignet sich perfekt fuer E-Mail-Signaturen, Briefkoepfe, Social-Avatars und Favicons. Hier ein Beispiel fuer eine Signatur:</p>
+
+  <div class="card" style="background:#fff;padding:32px;border-radius:14px;margin-bottom:16px">
+    <div style="border-top:2px solid var(--green);padding-top:20px;display:flex;gap:16px;align-items:flex-start">
+      <div style="font-family:var(--serif);font-weight:700;font-size:28px;letter-spacing:-0.04em;line-height:1;color:var(--ink);flex-shrink:0">A<span style="color:var(--green)">W</span></div>
+      <div style="flex:1">
+        <div style="font-family:var(--serif);font-weight:700;font-size:16px;color:var(--ink)">Daniel Dannhofer</div>
+        <div style="font-family:var(--sans);font-size:13px;color:var(--grey);margin-bottom:6px">Augmented Work — Workshops & KI-Strategie</div>
+        <div style="font-family:var(--mono);font-size:11px;color:var(--blueprint);line-height:1.7">
+          daniel@augmentedwork.eu<br>
+          augmentedwork.eu
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">Einsatz: Stempel</div>
+  <div class="card" style="text-align:center;padding:32px;background:#fff">
+    <div style="width:140px;height:140px;border:2.5px solid var(--ink);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto;opacity:0.9">
+      <div style="font-family:var(--serif);font-weight:700;font-size:36px;letter-spacing:-0.04em;line-height:1;color:var(--ink)">A<span style="color:var(--green)">W</span></div>
+      <div style="font-family:var(--mono);font-size:8px;letter-spacing:0.15em;color:var(--ink);margin-top:6px;text-transform:uppercase">augmented · work</div>
+    </div>
+    <div style="font-size:12px;color:var(--grey);margin-top:12px">Stempel-Variante — fuer echte Stempel auf Papier, Workshop-Unterlagen, Briefkoepfe</div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Favicon-Variante</div>
+  <div class="card" style="display:flex;align-items:center;justify-content:center;gap:16px;padding:24px;flex-wrap:wrap">
+    <!-- 32x32 Ink -->
+    <div style="text-align:center">
+      <div style="width:32px;height:32px;background:var(--ink);border-radius:6px;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-0.04em;color:var(--paper)">AW</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">32px</div>
+    </div>
+    <!-- 16x16 Ink -->
+    <div style="text-align:center">
+      <div style="width:16px;height:16px;background:var(--ink);border-radius:3px;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:var(--serif);font-weight:700;font-size:10px;letter-spacing:-0.04em;color:var(--paper)">AW</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">16px</div>
+    </div>
+    <!-- 32x32 Gruen -->
+    <div style="text-align:center">
+      <div style="width:32px;height:32px;background:var(--green);border-radius:6px;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:var(--serif);font-weight:700;font-size:18px;letter-spacing:-0.04em;color:var(--ink)">AW</span>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--grey);margin-top:6px">32px gruen</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Monogramm Regeln</div>
+  <div class="do-dont">
+    <div class="dd-card dd-do">
+      <div class="dd-h">&#10003; Do</div>
+      <ul>
+        <li>Georgia oder Fraunces, 700 weight, Letter-Spacing -0.04em — wie das Wordmark.</li>
+        <li>A in Ink, W als gruener Akzent (Variante A) oder beide in Ink (Fallback).</li>
+        <li>Ink auf Paper fuer helle Hintergruende.</li>
+        <li>Paper auf Ink fuer dunkle Hintergruende und Favicons.</li>
+        <li>Bei Groessen unter 20px beide Buchstaben in einer Farbe, ohne gruene Akzent.</li>
+      </ul>
+    </div>
+    <div class="dd-card dd-dont">
+      <div class="dd-h">&#10007; Don't</div>
+      <ul>
+        <li>Keine andere Schrift als die Serif-Familie (Georgia/Fraunces).</li>
+        <li>Keine Schatten, Glows oder Verlaufe.</li>
+        <li>Nicht ausfuehlen oder mit Kontur versehen.</li>
+        <li>Letter-Spacing nicht vergroessern — das Monogramm bleibt eng.</li>
+        <li>Nicht auf bunten Hintergruenden ohne Kontrast-Pruefung.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 4. FARBE ==================== -->
+<section class="section" id="color">
+  <div class="section-label">04 — Farbpalette</div>
+  <h2>Farben wie Papier, Tinte und Marker</h2>
+  <p class="lede">Die Palette ist eine Werkstatt: Papier als Grund, Tinte als Strich, Gruen als Signal, Coral als Akzent und Blueprint als Rueckzug. Keine Verlaufe, keine Neon-Effekte. Echte, matte, gedruckte Farben.</p>
+
+  <div class="color-row">
+    <div class="color-chip" style="background:#f4f1e8;color:#1a1a1a;border:1px solid #d4cfc2">
+      <div class="cname">Paper White</div>
+      <div class="chex">#F4F1E8</div>
+      <div class="cuse">Hauptgrund. Web, Print, Slides. 60% der Flaeche.</div>
+    </div>
+    <div class="color-chip" style="background:#1a1a1a;color:#f4f1e8">
+      <div class="cname">Ink Black</div>
+      <div class="chex">#1A1A1A</div>
+      <div class="cuse">Text, Logo-Strich, Dark-Mode-Hintergrund. 25%.</div>
+    </div>
+    <div class="color-chip" style="background:#2ecc71;color:#0a2a14">
+      <div class="cname">Workshop Green</div>
+      <div class="chex">#2ECC71</div>
+      <div class="cuse">Signal-Farbe. Akzent, Call-to-Action, Highlight. 10%.</div>
+    </div>
+    <div class="color-chip" style="background:#e07a5f;color:#fff">
+      <div class="cname">Marker Coral</div>
+      <div class="chex">#E07A5F</div>
+      <div class="cuse">Zweiter Akzent. Hand-Notizen, Warnungen, Highlights. 3%.</div>
+    </div>
+    <div class="color-chip" style="background:#3d5a80;color:#fff">
+      <div class="cname">Blueprint</div>
+      <div class="chex">#3D5A80</div>
+      <div class="cuse">Tertiaer. Links, sekundaere Info, Diagramme. 2%.</div>
+    </div>
+  </div>
+
+  <div class="section-label">Verteilung (60-25-10-3-2)</div>
+  <div class="pattern-strip">
+    <div style="background:#f4f1e8;color:var(--ink)">60%</div>
+    <div style="background:#1a1a1a;color:var(--paper)">25%</div>
+    <div style="background:#2ecc71;color:#0a2a14">10%</div>
+    <div style="background:#e07a5f;color:#fff">3%</div>
+    <div style="background:#3d5a80;color:#fff">2%</div>
+  </div>
+  <p class="body">Die Regel: Paper dominiert. Tinte traegt das Gewicht. Gruen setzt das Signal. Coral und Blueprint sind Wuerrze, nicht Hauptgericht.</p>
+
+  <div class="section-label" style="margin-top:24px">Farbkombinationen</div>
+  <div class="cards">
+    <div class="card" style="background:#f4f1e8;border-color:#d4cfc2">
+      <div class="h">Erlaubt</div>
+      <div class="t" style="margin-bottom:8px">
+        <span class="tag tag-ink">Paper + Ink</span>
+        <span class="tag tag-green">Paper + Green</span>
+        <span class="tag tag-coral">Paper + Coral</span>
+        <span class="tag tag-blue">Paper + Blueprint</span>
+      </div>
+    </div>
+    <div class="card" style="background:#1a1a1a;color:var(--paper);border-color:#333">
+      <div class="h" style="color:var(--paper)">Erlaubt (Dark)</div>
+      <div class="t" style="color:#bbb">
+        <span class="tag" style="background:rgba(46,204,113,0.2);color:var(--green)">Ink + Green</span>
+        <span class="tag" style="background:rgba(244,241,232,0.1);color:var(--paper)">Ink + Paper</span>
+      </div>
+    </div>
+    <div class="card" style="border-color:var(--coral)">
+      <div class="h" style="color:var(--coral)">Verboten</div>
+      <div class="t">
+        <span class="tag tag-coral">Green + Coral direkt</span>
+        <span class="tag tag-coral">Coral + Blueprint</span>
+        <span class="tag tag-coral">3+ Akzente gleichzeitig</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 5. TYPOGRAFIE ==================== -->
+<section class="section" id="type">
+  <div class="section-label">05 — Typografie</div>
+  <h2>Schriften mit Charakter</h2>
+  <p class="lede">Drei Schriften, drei Rollen. Eine Serif fuer das Gewicht, eine Sans fuer die Lesbarkeit, eine Hand-Schrift fuer den Workshop-Moment. Zusammen ergeben sie den "Workshop-Signal"-Klang.</p>
+
+  <div class="type-scale">
+    <div class="type-row">
+      <div class="tmeta">Display<br>Georgia / Fraunces<br>700</div>
+      <div class="tsample" style="font-family:var(--serif);font-size:40px;font-weight:700;letter-spacing:-0.02em">Augmented Work</div>
+    </div>
+    <div class="type-row">
+      <div class="tmeta">H2<br>Georgia / Fraunces<br>700</div>
+      <div class="tsample" style="font-family:var(--serif);font-size:28px;font-weight:700">Wir bauen zusammen.</div>
+    </div>
+    <div class="type-row">
+      <div class="tmeta">Body<br>System Sans / Inter<br>400-600</div>
+      <div class="tsample" style="font-family:var(--sans);font-size:16px">Unsere Stimme ist wie ein guter Workshop-Moderator: locker, aber kompetent.</div>
+    </div>
+    <div class="type-row">
+      <div class="tmeta">Small / Meta<br>System Mono<br>500</div>
+      <div class="tsample" style="font-family:var(--mono);font-size:12px;letter-spacing:0.05em">VERSION 1.0 — AUGUST 2026</div>
+    </div>
+    <div class="type-row">
+      <div class="tmeta">Handakzent<br>Caveat / Bradley Hand<br>400</div>
+      <div class="tsample" style="font-family:var(--hand);font-size:24px;color:var(--coral)">wie von Hand auf die Flipchart!</div>
+    </div>
+  </div>
+
+  <div class="section-label">Hierarchie-Regeln</div>
+  <div class="cards">
+    <div class="card">
+      <div class="num">01</div>
+      <div class="h">Maximal 3 Ebenen</div>
+      <div class="t">Ueberschrift, Zwischenueberschrift, Fliesstext. Mehr braucht kein Mensch.</div>
+    </div>
+    <div class="card">
+      <div class="num">02</div>
+      <div class="h">Serif fuer Headlines</div>
+      <div class="t">Jede Ueberschrift ist Serif. Fliesstext immer Sans. Keine Ausnahme.</div>
+    </div>
+    <div class="card">
+      <div class="num">03</div>
+      <div class="h">Hand nur als Akzent</div>
+      <div class="t">Maximal ein Hand-Schrift-Einsatz pro Slide oder Seite. Als Marginalie, Notiz, Pfeil. Nicht fuer Lesetext.</div>
+    </div>
+    <div class="card">
+      <div class="num">04</div>
+      <div class="h">Mono fuer Metadaten</div>
+      <div class="t">Versionen, Labels, Captions, Code-Snippets. Nie fuer Laengertext.</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Web-Font-Stack</div>
+  <div class="card" style="font-family:var(--mono);font-size:13px;line-height:1.7">
+    <div>--font-serif: Georgia, 'Times New Roman', serif;</div>
+    <div>--font-sans: -apple-system, 'Segoe UI', Roboto, sans-serif;</div>
+    <div>--font-hand: 'Caveat', 'Bradley Hand', cursive;</div>
+    <div>--font-mono: 'SF Mono', 'JetBrains Mono', monospace;</div>
+  </div>
+</section>
+
+<!-- ==================== 6. BILDELEMENTE ==================== -->
+<section class="section" id="pattern">
+  <div class="section-label">06 — Bildelemente & Muster</div>
+  <h2>Die visuelle Werkstatt</h2>
+  <p class="lede">Die Bildelemente sind aus der realen Werkstatt abgeleitet: Gitterlinien wie auf Karopapier, Marker-Striche, Pfeile von Hand, umkreiste Worte. Die Aesthetik ist bewusst unperfekt — wie ein gutes Flipchart-Foto, nicht wie ein gerendertes UI-Mockup.</p>
+
+  <div class="section-label">Gitter / Grid</div>
+  <div class="card" style="background:#fff;background-image:linear-gradient(rgba(61,90,128,0.08) 1px,transparent 1px),linear-gradient(90deg,rgba(61,90,128,0.08) 1px,transparent 1px);background-size:24px 24px;padding:40px;border-radius:14px;margin-bottom:16px">
+    <div style="font-family:var(--serif);font-size:24px;font-weight:700">Blueprint-Grid als dezenter Hintergrund</div>
+    <div style="font-size:14px;color:var(--grey);margin-top:8px">8% Opazitaet — gerade genug, um Struktur zu suggerieren, ohne zu dominieren.</div>
+  </div>
+
+  <div class="section-label">Marker-Striche</div>
+  <div class="card" style="text-align:center;padding:40px">
+    <svg width="280" height="80" viewBox="0 0 280 80" fill="none" style="max-width:100%">
+      <path d="M20 60 Q140 20 260 55" stroke="#2ecc71" stroke-width="5" stroke-linecap="round" fill="none" opacity="0.85"/>
+      <path d="M250 48 L262 56 L252 64" stroke="#2ecc71" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.85"/>
+    </svg>
+    <div style="font-size:13px;color:var(--grey);margin-top:12px">Gruener Marker-Strich mit Pfeil — fuer Highlights, Verbesserungen, "hier lang"</div>
+  </div>
+
+  <div class="section-label">Hand-Pfeile</div>
+  <div class="card" style="text-align:center;padding:40px">
+    <svg width="220" height="60" viewBox="0 0 220 60" fill="none" style="max-width:100%">
+      <path d="M15 40 C60 15, 120 50, 200 28" stroke="#e07a5f" stroke-width="3" stroke-linecap="round" fill="none"/>
+      <path d="M192 22 L202 28 L194 36" stroke="#e07a5f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div style="font-size:13px;color:var(--grey);margin-top:12px">Coraler Hand-Pfeil — fuer Verbindungen, Notizen, Marginalien</div>
+  </div>
+
+  <div class="section-label">Umkreisungen</div>
+  <div class="card" style="text-align:center;padding:40px">
+    <svg width="220" height="80" viewBox="0 0 220 80" fill="none" style="max-width:100%">
+      <ellipse cx="110" cy="40" rx="90" ry="28" stroke="#e07a5f" stroke-width="3" fill="none" transform="rotate(-3 110 40)"/>
+    </svg>
+    <div style="font-family:var(--serif);font-size:18px;font-weight:700;margin-top:12px;color:var(--ink)">das hier!</div>
+    <div style="font-size:13px;color:var(--grey);margin-top:4px">Coraler Hand-Umkreis um wichtige Worte oder Begriffe</div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Iconografie</div>
+  <p class="body">Icons sind handgezeichnet, nicht aus einem Icon-Kit. Jedes Icon hat bewusste Unregelmassigkeiten: wackelige Linien, Luecken wo Striche nicht ganz zusammenkommen, leicht variierende Strichstaerken. So wie ein Mensch mit einem Stift auf Papier zeichnet — nicht wie ein Computer. Stil: 2.5px Strichstaerke, runde Enden, Ink Black. Manchmal ein gruener Akzent.</p>
+
+  <!-- Icon grid with hand-drawn imperfections -->
+  <div class="card" style="padding:32px;margin-bottom:16px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:24px;text-align:center">
+      <!-- 1. Workshop/Flipchart -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M8 12 Q8 10 10 10 L37 11 Q39 11 39 13 L38 28 Q38 30 36 30 L12 29 Q9 29 9 27 Z" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M10 16 L37 17" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M24 30 L23 40" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M16 41 L31 40" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M16 21 Q24 19 31 22" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">flipchart</div>
+      </div>
+      <!-- 2. Chat/Dialog -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M8 14 Q8 9 13 9 L33 10 Q37 10 37 15 L36 25 Q36 29 32 29 L20 28 L13 35 L14 28 Q9 28 8 24 Z" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M15 17 L29 18" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+          <path d="M15 22 L25 22" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">dialog</div>
+      </div>
+      <!-- 3. Gear/Automation (bewusst schief) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M24 9 Q15 10 15 19 Q14 25 20 27 Q27 28 30 23 Q33 17 28 13 Q26 10 24 9 Z" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="23" cy="19" r="4" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M24 5 L23 9 M28 10 L30 8 M33 16 L37 15 M33 24 L36 26 M24 30 L24 34 M14 26 L11 28 M11 19 L7 19 M12 13 L9 11" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">automation</div>
+      </div>
+      <!-- 4. Lightbulb/Idee (unsymmetrisch) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M24 8 Q15 9 15 19 Q14 25 19 29 L19 33 L28 33 L28 29 Q33 25 33 18 Q33 9 24 8 Z" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M19 36 L27 36" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M20 39 L26 39" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M22 14 Q23 18 22 21" stroke="#2ecc71" stroke-width="2" stroke-linecap="round" fill="none"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">idee</div>
+      </div>
+      <!-- 5. Pfeil nach oben (wackelig) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M24 38 L23 12" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M15 21 L23 11 L31 20" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">wachstum</div>
+      </div>
+      <!-- 6. Flow/Verbindung (mit Luecke) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <rect x="6" y="14" width="12" height="12" rx="3" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M18 20 L26 20" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="3 2"/>
+          <circle cx="33" cy="20" r="6" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M33 14 L33 8" stroke="#2ecc71" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">flow</div>
+      </div>
+      <!-- 7. Checkmark (handgemacht schief) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <circle cx="24" cy="24" r="17" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-dasharray="0.1 0.5" opacity="0.3"/>
+          <path d="M15 25 L21 31 L33 17" stroke="#2ecc71" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">check</div>
+      </div>
+      <!-- 8. Menschen/Team (wackelig) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <circle cx="16" cy="16" r="5" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M10 36 Q10 26 16 25 Q22 26 22 36" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="33" cy="16" r="5" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M27 36 Q27 26 33 25 Q39 26 39 36" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M24 12 Q25 14 24 16" stroke="#2ecc71" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">team</div>
+      </div>
+      <!-- 9. Stift/Schreiben -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <path d="M34 8 L40 14 L18 36 L11 37 L12 30 Z" stroke="#1a1a1a" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          <path d="M30 12 L36 18" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M12 37 L10 40" stroke="#2ecc71" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">schreiben</div>
+      </div>
+      <!-- 10. Knoten/Netz (asymmetrisch) -->
+      <div>
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" style="margin:0 auto;display:block">
+          <circle cx="24" cy="12" r="4" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <circle cx="12" cy="30" r="4" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <circle cx="36" cy="31" r="4" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M22 16 L13 26 M26 16 L34 27 M15 33 L33 32" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round" stroke-dasharray="0 0"/>
+          <circle cx="24" cy="24" r="2.5" fill="#2ecc71"/>
+        </svg>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey);margin-top:6px">netz</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px">Hand-Drawn Prinzipien</div>
+  <div class="cards">
+    <div class="card">
+      <div class="h" style="color:var(--green)">Wackelige Linien</div>
+      <div class="t">Statt perfekter gerader Linien: leichte Kurven, kleine Richtungswechsel. Als ob die Hand beim Zeichnen leicht zittert.</div>
+    </div>
+    <div class="card">
+      <div class="h" style="color:var(--green)">Luecken</div>
+      <div class="t">Linien die nicht ganz zusammenkommen. Ein Kreis der nicht geschlossen ist. Ein Pfeil der den Anschluss leicht verfehlt.</div>
+    </div>
+    <div class="card">
+      <div class="h" style="color:var(--green)">Variierende Strichstaerke</div>
+      <div class="t">Nicht jede Linie gleich dick. Hauptlinien 2.5px, Details 2px, Akzente in gruene duenner (2px).</div>
+    </div>
+    <div class="card">
+      <div class="h" style="color:var(--green)">Asymmetrie</div>
+      <div class="t">Kreise die leicht eiförmig sind. Rechtecke die nicht rechtwinklig sind. Pfeile die leicht schief stehen.</div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:20px">So nicht:</div>
+  <div class="card" style="border:2px solid var(--coral);background:rgba(224,122,95,0.03);text-align:center;padding:32px">
+    <div style="display:flex;justify-content:center;gap:32px;flex-wrap:wrap">
+      <!-- Perfekter Kreis = FALSCH -->
+      <div>
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="display:block">
+          <circle cx="22" cy="22" r="16" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+        </svg>
+        <div style="font-family:var(--hand);font-size:14px;color:var(--coral);margin-top:4px">zu perfekt</div>
+      </div>
+      <!-- Gerade Linien = FALSCH -->
+      <div>
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="display:block">
+          <rect x="8" y="8" width="28" height="28" rx="4" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+          <path d="M8 22 L36 22" stroke="#1a1a1a" stroke-width="2.5"/>
+        </svg>
+        <div style="font-family:var(--hand);font-size:14px;color:var(--coral);margin-top:4px">zu starr</div>
+      </div>
+      <!-- Symmetrisch = FALSCH -->
+      <div>
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" style="display:block">
+          <path d="M22 8 L22 36 M8 22 L36 22" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="22" cy="22" r="6" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+        </svg>
+        <div style="font-family:var(--hand);font-size:14px;color:var(--coral);margin-top:4px">zu symmetrisch</div>
+      </div>
+    </div>
+  </div>
+  <p class="body" style="font-size:13px;color:var(--grey);text-align:center">Handgezeichnet heisst: hineinschauen und sehen, dass ein Mensch das gemacht hat. Nicht zu viel Unordnung, aber genug Charakter.</p>
+</section>
+
+<!-- ==================== 7. BILDSPRACHE ==================== -->
+<section class="section" id="imagery">
+  <div class="section-label">07 — Bildsprache & Fotografie</div>
+  <h2>Ernsthaft handgemacht</h2>
+  <p class="lede">Fotos zeigen echte Menschen bei echter Arbeit: Haende auf Tastaturen, Flipcharts mit echten Notizen, Workshop-Raeume mit Kaffeebechern. Keine Stock-Fotos von lachenden Teams im Buero. Keine KI-generierten Bilder. Die Unvollkommenheit ist das Signal.</p>
+
+  <div class="cards">
+    <div class="card">
+      <div class="h" style="color:var(--green)">Do</div>
+      <div class="t">
+        Echte Workshop-Fotos. Haende, Stifte, Flipcharts. Natuerliches Licht. Ungeschnitten, wenn moeglich. Menschen in Bewegung, nicht posiert.
+      </div>
+    </div>
+    <div class="card">
+      <div class="h" style="color:var(--coral)">Don't</div>
+      <div class="t">
+        Stockfotos. Menschen, die in die Kamera laecheln. Glaseerne Bueros. Abstrakte Datenvisualisierungen. KI-generierte Avatare. Alles, was zu glatt ist.
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Brand-Bildmaterial — Stimmbeispiele</div>
+  <p class="body">Drei Bild-Richtungen die die Workshop-Signal-Aesthetik zeigen: Workshop-Atmosphaere von oben, Hand-draw-Textur und Close-up beim Zeichnen.</p>
+
+  <div class="app-grid" style="margin-bottom:16px">
+    <div class="app-card">
+      <div class="preview" style="height:200px;padding:0;overflow:hidden">
+        <img src="https://mistralaichatupprodswe.blob.core.windows.net/chat-images/assistant/2e/ae/62/2eae6223-11fe-4820-8ab4-fa7e394cc263/6774771a-64e0-45b5-8eea-feefb205d0b3/eb998e2a-8c6d-4a7b-b48d-b81467578558/5b182929-5f33-4f7b-93b5-c0f031a63400.jpg" style="width:100%;height:100%;object-fit:cover" alt="Workshop Hero" />
+      </div>
+      <div class="meta">
+        <div class="title">Hero-Bild: Workshop von oben</div>
+        <div class="desc">Vogelperspektive, Haende auf Flipchart, Marker, Kaffee. Warm, authentisch, ungestellt. Fuer Website-Hero oder Workshop-Anmeldung.</div>
+      </div>
+    </div>
+    <div class="app-card">
+      <div class="preview" style="height:200px;padding:0;overflow:hidden">
+        <img src="https://mistralaichatupprodswe.blob.core.windows.net/chat-images/assistant/2e/ae/62/2eae6223-11fe-4820-8ab4-fa7e394cc263/6774771a-64e0-45b5-8eea-feefb205d0b3/1abcf3e8-1c52-4112-91b0-affcf3381079/3dae0a88-f6f5-4b90-a7f3-972b0ada5bef.jpg" style="width:100%;height:100%;object-fit:cover" alt="Hand-draw Textur" />
+      </div>
+      <div class="meta">
+        <div class="title">Textur: Hand-Draw-Pattern</div>
+        <div class="desc">Wackelige Doodles, Pfeile, Kreise auf Cremepapier. Als Hintergrund, Texture-Overlay oder Section-Trenner.</div>
+      </div>
+    </div>
+    <div class="app-card">
+      <div class="preview" style="height:200px;padding:0;overflow:hidden">
+        <img src="https://mistralaichatupprodswe.blob.core.windows.net/chat-images/assistant/2e/ae/62/2eae6223-11fe-4820-8ab4-fa7e394cc263/6774771a-64e0-45b5-8eea-feefb205d0b3/33ce6be5-9ee1-4f73-a667-9bce2b806fa8/cad370a6-53a7-4883-853b-bb340fd86b63.jpg" style="width:100%;height:100%;object-fit:cover" alt="Marker Close-up" />
+      </div>
+      <div class="meta">
+        <div class="title">Close-up: Hand am Flipchart</div>
+        <div class="desc">Marker auf Papier, fokus auf die Spitze. Dokumentarfoto-Stil. Fuer Uebergangs-Slides oder Social Posts.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Bildbehandlung</div>
+  <p class="body">Fotos duerfen leicht entsaettigt sein, mit warmem Stich Richtung Papier-Ton. Keine dramatischen Filter. Die Bildsprache soll aussehen, als waere sie mit einer guten Kamera in einem echten Raum aufgenommen — nicht nach einem Werbespot.</p>
+
+  <div class="pattern-strip" style="height:120px">
+    <div style="background:#e8e0d0;color:var(--ink);font-size:13px">Natuerlich</div>
+    <div style="background:#f0e8d8;color:var(--ink);font-size:13px">Warm</div>
+    <div style="background:#d8d0c0;color:var(--ink);font-size:13px">Entsaettigt</div>
+    <div style="background:#c8c0b0;color:var(--ink);font-size:13px">Gedruckt</div>
+  </div>
+
+  <div class="section-label" style="margin-top:24px">Grafik-Stil fuer Diagramme & Slides</div>
+  <p class="body">Diagramme sehen aus wie von Hand auf Karopapier gezeichnet: duenne Blueprint-Gitterlinien, dicke Marker-Striche, Hand-Schrift-Labels. Keine gerenderten Charts aus PowerPoint-Vorlagen.</p>
+
+  <div class="card" style="background:#fff;background-image:linear-gradient(rgba(61,90,128,0.08) 1px,transparent 1px),linear-gradient(90deg,rgba(61,90,128,0.08) 1px,transparent 1px);background-size:20px 20px;padding:32px;border-radius:14px">
+    <svg width="100%" height="140" viewBox="0 0 400 140" fill="none" preserveAspectRatio="xMidYMid meet" style="max-width:360px;display:block;margin:0 auto">
+      <path d="M30 100 L130 60 L230 80 L330 30" stroke="#2ecc71" stroke-width="4" stroke-linecap="round" fill="none"/>
+      <circle cx="30" cy="100" r="5" fill="#1a1a1a"/>
+      <circle cx="130" cy="60" r="5" fill="#1a1a1a"/>
+      <circle cx="230" cy="80" r="5" fill="#1a1a1a"/>
+      <circle cx="330" cy="30" r="5" fill="#1a1a1a"/>
+      <text x="30" y="120" font-family="Georgia,serif" font-size="14" fill="#1a1a1a">Start</text>
+      <text x="120" y="120" font-family="Georgia,serif" font-size="14" fill="#1a1a1a">Workshop</text>
+      <text x="210" y="120" font-family="Georgia,serif" font-size="14" fill="#1a1a1a">Bau</text>
+      <text x="315" y="120" font-family="Georgia,serif" font-size="14" fill="#1a1a1a">Live</text>
+      <path d="M330 30 Q345 15 360 25" stroke="#e07a5f" stroke-width="2.5" fill="none"/>
+      <text x="350" y="18" font-family="Caveat,cursive" font-size="16" fill="#e07a5f">Augmented!</text>
+    </svg>
+  </div>
+</section>
+
+<!-- ==================== 8. ANWENDUNG ==================== -->
+<section class="section" id="apps">
+  <div class="section-label">08 — Anwendung</div>
+  <h2>Wo die Marke lebt</h2>
+  <p class="lede">Augmented Work erscheint auf Flipcharts, auf Slides, auf der Website, auf Visitenkarten und in E-Mails. Ueberall dieselbe Regel: Papiergrund, Tinte-Strich, ein Gruen, ein Coral. Nicht mehr.</p>
+
+  <div class="app-grid">
+    <!-- Workshop Slide -->
+    <div class="app-card">
+      <div class="preview" style="background:#f4f1e8;flex-direction:column;gap:12px;padding:20px">
+        <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);align-self:flex-start">Workshop: KI-Flows</div>
+        <svg width="180" height="50" viewBox="0 0 180 50" fill="none">
+          <rect x="10" y="14" width="50" height="22" rx="4" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+          <rect x="70" y="14" width="50" height="22" rx="4" stroke="#1a1a1a" stroke-width="2" fill="none"/>
+          <rect x="130" y="14" width="40" height="22" rx="4" stroke="#2ecc71" stroke-width="2.5" fill="none"/>
+          <path d="M60 25 L70 25 M120 25 L130 25" stroke="#1a1a1a" stroke-width="2"/>
+        </svg>
+        <div style="font-family:var(--hand);font-size:16px;color:var(--coral);align-self:flex-start">hier ansetzen!</div>
+      </div>
+      <div class="meta">
+        <div class="title">Workshop-Slides</div>
+        <div class="desc">Paper-Grund, Marker-Akzente, Hand-Notizen. Jede Slide wie eine Flipchart-Seite.</div>
+      </div>
+    </div>
+
+    <!-- Visitenkarte -->
+    <div class="app-card">
+      <div class="preview" style="background:var(--ink);flex-direction:column;gap:8px">
+        <svg width="32" height="32" viewBox="0 0 48 48" fill="none">
+          <path d="M10 36 Q24 12 38 36" stroke="#f4f1e8" stroke-width="3" stroke-linecap="round" fill="none"/>
+          <circle cx="24" cy="22" r="5" fill="#2ecc71"/>
+        </svg>
+        <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--paper)">augmented work</div>
+        <div style="font-family:var(--mono);font-size:9px;color:var(--grey)">Daniel Dannhofer</div>
+      </div>
+      <div class="meta">
+        <div class="title">Visitenkarte</div>
+        <div class="desc">Ink-Grund, Paper-Schrift, Gruen-Akzent. Minimal, markant, taktil.</div>
+      </div>
+    </div>
+
+    <!-- Web Hero -->
+    <div class="app-card">
+      <div class="preview" style="background:#f4f1e8;flex-direction:column;gap:8px;padding:20px">
+        <div style="font-family:var(--serif);font-size:18px;font-weight:700;color:var(--ink);line-height:1.2">Wir bauen<br>zusammen.</div>
+        <div style="background:var(--green);color:#0a2a14;font-size:10px;font-weight:700;padding:4px 10px;border-radius:100px">Workshop buchen</div>
+      </div>
+      <div class="meta">
+        <div class="title">Website-Hero</div>
+        <div class="desc">Serif-Headline, Paper-Grund, gruener CTA. Klar, warm, direkt.</div>
+      </div>
+    </div>
+
+    <!-- Social -->
+    <div class="app-card">
+      <div class="preview" style="background:var(--green);flex-direction:column">
+        <div style="font-family:var(--serif);font-size:22px;font-weight:700;color:var(--ink);text-align:center">Augmented<br>Work</div>
+        <div style="font-family:var(--hand);font-size:14px;color:#0a2a14;margin-top:4px">echt. nicht generiert.</div>
+      </div>
+      <div class="meta">
+        <div class="title">Social Posts</div>
+        <div class="desc">Gruener Hintergrund als Signal. Serif + Hand-Schrift. Wiedererkennbar auf einen Blick.</div>
+      </div>
+    </div>
+
+    <!-- E-Mail -->
+    <div class="app-card">
+      <div class="preview" style="background:#fff;flex-direction:column;gap:6px;padding:20px;align-items:flex-start">
+        <div style="width:100%;height:3px;background:var(--green);border-radius:2px"></div>
+        <div style="font-family:var(--serif);font-size:14px;font-weight:700;color:var(--ink)">Hallo zusammen,</div>
+        <div style="font-family:var(--sans);font-size:10px;color:var(--grey);line-height:1.5">lasst uns das naechste Woche ansehen...</div>
+      </div>
+      <div class="meta">
+        <div class="title">E-Mail-Signatur & Header</div>
+        <div class="desc">Gruener Strich oben, Serif-Anrede, Sans-Text. Warm und professionell.</div>
+      </div>
+    </div>
+
+    <!-- Flipchart -->
+    <div class="app-card">
+      <div class="preview" style="background:#f4f1e8;background-image:linear-gradient(rgba(61,90,128,0.06) 1px,transparent 1px),linear-gradient(90deg,rgba(61,90,128,0.06) 1px,transparent 1px);background-size:16px 16px;flex-direction:column;gap:6px;padding:20px">
+        <div style="font-family:var(--hand);font-size:18px;color:var(--coral)">Workflow!</div>
+        <svg width="120" height="40" viewBox="0 0 120 40" fill="none">
+          <path d="M10 20 L50 20 L50 10 L90 10 L90 30 L110 30" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="110" cy="30" r="4" fill="#2ecc71"/>
+        </svg>
+      </div>
+      <div class="meta">
+        <div class="title">Flipchart-Vorlagen</div>
+        <div class="desc">Digitale Flipcharts mit Karopapier-Gitter, Hand-Schrift, Marker-Pfeilen.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== 9. DOS & DONTS ==================== -->
+<section class="section" id="rules">
+  <div class="section-label">09 — Uebersicht</div>
+  <h2>Do's & Don'ts</h2>
+  <p class="lede">Die wichtigsten Regeln auf einen Blick. Wenn du dich an diese haelst, bist du auf der sicheren Seite.</p>
+
+  <div class="do-dont">
+    <div class="dd-card dd-do">
+      <div class="dd-h">&#10003; Do</div>
+      <ul>
+        <li>Paper White als Hauptgrund fuer fast alles.</li>
+        <li>Serif (Georgia/Fraunces) fuer alle Ueberschriften.</li>
+        <li>Workshop Green als einziges Signal-Farbe.</li>
+        <li>Hand-Schrift als sparsamer Akzent — max. 1x pro Slide.</li>
+        <li>Bilder: echte Fotos, natuerlich, warm, ungeschnitten.</li>
+        <li>Icons handgezeichnet, 2.5px, runde Enden.</li>
+        <li>Diagramme wie auf Karopapier, nicht wie aus PowerPoint.</li>
+        <li>Marker-Coral fuer Pfeile, Umkreisungen, Notizen.</li>
+        <li>AW-Monogramm: A und W nebeneinander, fuer Signaturen, Favicons, Stempel.</li>
+        <li>Stimme locker, direkt, wie mit einem Freund am Tisch.</li>
+        <li>Unperfektion ist gewollt — keine Pixel-Praezision anstreben.</li>
+      </ul>
+    </div>
+    <div class="dd-card dd-dont">
+      <div class="dd-h">&#10007; Don't</div>
+      <ul>
+        <li>Keine Verlaefe, Glows oder Neon-Effekte.</li>
+        <li>Keine 3+ Akzente gleichzeitig auf einer Flaeche.</li>
+        <li>Keine Sans-Schrift fuer Ueberschriften.</li>
+        <li>Keine Hand-Schrift fuer Fliesstext oder Laengertext.</li>
+        <li>Keine KI-generierten Bilder oder Avatare.</li>
+        <li>Keine glatten Stockfotos von lachenden Teams.</li>
+        <li>Keine gerenderten Charts aus Icon-Kits oder PPT-Vorlagen.</li>
+        <li>Keine Buzzwords: "synergetisch", "disruptiv", "agil nutzen".</li>
+        <li>Keine Passivkonstruktionen oder Schachtelsaetze.</li>
+        <li>Kein Green + Coral direkt nebeneinander als Flaeche.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="quote" style="margin-top:40px">"Wenn es aussieht wie von einem Menschen gemacht — mit Handschlag und allem — dann ist es richtig."</div>
+  <div class="hand-note">— die goldene Regel</div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer class="end">
+  <strong>Augmented Work</strong> — Brand Guidelines v1.0<br>
+  The Workshop Signal · Erstellt August 2026<br><br>
+  Diese Guidelines sind ein lebendiges Dokument. Anpassungen vorbehalten.
+</footer>
+
+<script>
+  const btns = document.querySelectorAll('.nav-btn');
+  btns.forEach(b => b.addEventListener('click', () => {
+    const t = b.dataset.t;
+    btns.forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    const el = document.getElementById(t);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }));
+  // highlight on scroll
+  const ids = ['essence','voice','logo','color','type','pattern','imagery','apps','rules'];
+  const sects = ids.map(id => document.getElementById(id));
+  window.addEventListener('scroll', () => {
+    let active = ids[0];
+    sects.forEach((s, i) => {
+      if (s && s.getBoundingClientRect().top < 150) active = ids[i];
+    });
+    btns.forEach(b => b.classList.toggle('active', b.dataset.t === active));
+  });
+</script>
+
+</body>
+</html>
