@@ -18,12 +18,14 @@ set(SOURCES
     src/window.cpp
     src/webview.cpp
     src/ipc.cpp
+    src/speech/audio.cpp
 )
 
 set(HEADERS
     src/window.h
     src/webview.h
     src/ipc.h
+    src/speech/audio.h
 )
 
 # --- Executable ---
@@ -58,6 +60,7 @@ target_link_libraries(Teleprompter PRIVATE
     oleaut32
     uuid
     shlwapi
+    avrt
 )
 
 # --- Whisper.cpp (added in Task 4) ---
@@ -76,6 +79,14 @@ if(BUILD_TESTS)
     )
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
     FetchContent_MakeAvailable(googletest)
+
+    # Audio capture test
+    add_executable(audio_test tests/cpp/audio_test.cpp src/speech/audio.cpp)
+    target_include_directories(audio_test PRIVATE src)
+    target_link_libraries(audio_test PRIVATE GTest::gtest_main avrt)
+    add_test(NAME audio_test COMMAND audio_test)
+
+    # More test executables will be added in later tasks
 endif()
 
 # --- Post-build: copy WebView2 loader DLL ---
