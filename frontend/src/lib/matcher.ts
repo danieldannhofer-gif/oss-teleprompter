@@ -118,9 +118,19 @@ export class ScriptMatcher {
 
       let substringScore = 0;
       if (line.includes(text)) {
-        substringScore = text.length / line.length;
+        // Transcript is a contiguous substring of the line.
+        // Score by word coverage with a base of 0.65 — a partial
+        // contiguous match is a strong on-script signal.
+        const lineWords = tokenize(line);
+        const textWords = tokenize(text);
+        const coverage = textWords.length / lineWords.length;
+        substringScore = 0.65 + 0.35 * coverage;
       } else if (text.includes(line)) {
-        substringScore = line.length / text.length;
+        // Full line is contained in the transcript.
+        const lineWords = tokenize(line);
+        const textWords = tokenize(text);
+        const coverage = lineWords.length / textWords.length;
+        substringScore = 0.65 + 0.35 * coverage;
       }
 
       const lineTokens = tokenize(line);
