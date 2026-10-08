@@ -1,0 +1,6 @@
+[submodule "teleprompter/third_party/nlohmann_json"]
+	path = teleprompter/third_party/nlohmann_json
+	url = https://github.com/nlohmann/json.git
+[submodule "teleprompter/third_party/whisper.cpp"]
+	path = teleprompter/third_party/whisper.cpp
+	url = https://github.com/ggerganov/whisper.cpp.git
