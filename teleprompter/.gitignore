@@ -1,0 +1,27 @@
+# Build artifacts
+build/
+Debug/
+Release/
+x64/
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# OS
+Thumbs.db
+.DS_Store
+
+# WebView2 SDK (downloaded at build time)
+build/webview2/
+build/webview2.nupkg
+build/webview2.zip
+
+# Whisper models (downloaded at runtime)
+frontend/public/models/*.bin
