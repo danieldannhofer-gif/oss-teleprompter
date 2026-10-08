@@ -69,6 +69,11 @@ export const overlayMessages = {
   alwaysOnTop: (enabled: boolean) => postToBackend({ type: 'overlay:alwaysOnTop', enabled }),
 };
 
+export const windowMessages = {
+  dock: (position: 'none' | 'top' | 'bottom', heightPercent: number) =>
+    postToBackend({ type: 'window:dock', position, heightPercent }),
+};
+
 export const speechMessages = {
   start: () => postToBackend({ type: 'speech:start' }),
   stop: () => postToBackend({ type: 'speech:stop' }),

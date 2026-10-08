@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOverlay } from './hooks/useOverlay';
 import { useVoiceTracking } from './hooks/useVoiceTracking';
 import { usePrompter } from './hooks/usePrompter';
 import { useKeyboard } from './hooks/useKeyboard';
 import { useSettings } from './hooks/useSettings';
 import { t } from './lib/i18n';
+import { windowMessages } from './lib/webview';
 import { SettingsPanel } from './components/SettingsPanel';
 import { PrompterView } from './components/PrompterView';
 import { StatusBar } from './components/StatusBar';
 import { ScriptEditor } from './components/ScriptEditor';
+import { Timeline } from './components/Timeline';
+
+type DockPosition = 'none' | 'top' | 'bottom';
 
 function App() {
   const overlay = useOverlay();
@@ -17,13 +21,77 @@ function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [dockPosition, setDockPosition] = useState<DockPosition>(() => {
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return parsed.dockPosition ?? 'none';
+      }
+    } catch { /* ignore */ }
+    return 'none';
+  });
+  const [showTimeline, setShowTimeline] = useState(() => {
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        return parsed.showTimeline !== false;
+      }
+    } catch { /* ignore */ }
+    return true;
+  });
+
+  // Apply dock on mount
+  useEffect(() => {
+    if (dockPosition !== 'none') {
+      const height = (() => {
+        try {
+          const raw = localStorage.getItem('teleprompter-settings');
+          if (raw) return JSON.parse(raw).dockHeightPercent ?? 60;
+        } catch { /* ignore */ }
+        return 60;
+      })();
+      windowMessages.dock(dockPosition, height);
+    }
+  }, []);
+
+  // Listen for timeline toggle from SettingsPanel
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<{ show: boolean }>).detail;
+      setShowTimeline(detail.show);
+    };
+    window.addEventListener('teleprompter:timelineToggle', handler);
+    return () => window.removeEventListener('teleprompter:timelineToggle', handler);
+  }, []);
 
   const voice = useVoiceTracking(voiceEnabled && prompter.lines.length > 0);
+
+  const handleDock = (pos: DockPosition) => {
+    setDockPosition(pos);
+    let height = 60;
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      if (raw) height = JSON.parse(raw).dockHeightPercent ?? 60;
+    } catch { /* ignore */ }
+    windowMessages.dock(pos, height);
+    // Persist
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      const settings = raw ? JSON.parse(raw) : {};
+      settings.dockPosition = pos;
+      localStorage.setItem('teleprompter-settings', JSON.stringify(settings));
+    } catch { /* ignore */ }
+  };
 
   // Keyboard shortcuts
   useKeyboard({
     onToggleOverlay: overlay.toggleOverlay,
     onToggleClickThrough: overlay.toggleClickThrough,
+    onDockTop: () => handleDock(dockPosition === 'top' ? 'none' : 'top'),
+    onDockBottom: () => handleDock(dockPosition === 'bottom' ? 'none' : 'bottom'),
+    onDockNone: () => handleDock('none'),
     onStartStopListening: () => {
       if (voiceEnabled) {
         voice.stopListening();
@@ -88,6 +156,19 @@ function App() {
         </div>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {/* Dock toggle */}
+          <button
+            onClick={() => handleDock(dockPosition === 'top' ? 'none' : 'top')}
+            title="Dock to top (F3)"
+            style={{
+              padding: '6px 10px', fontSize: 13, cursor: 'pointer',
+              background: dockPosition === 'top' ? '#2563eb' : '#333',
+              color: '#fff', border: '1px solid #555', borderRadius: 4,
+            }}
+          >
+            {dockPosition === 'top' ? '⬆ Docked' : '⬆ Dock'}
+          </button>
+
           <button
             onClick={() => setShowEditor(true)}
             style={{
@@ -149,6 +230,7 @@ function App() {
 
       <PrompterView />
       <StatusBar />
+      {showTimeline && <Timeline />}
 
       {showSettings && (
         <div style={{ position: 'absolute', top: 60, right: 20, zIndex: 100 }}>
@@ -159,8 +241,8 @@ function App() {
       {showEditor && <ScriptEditor onClose={() => setShowEditor(false)} />}
 
       {/* Keyboard shortcut hint */}
-      <div style={{ position: 'fixed', bottom: 40, left: 20, fontSize: 10, color: '#444', pointerEvents: 'none' }}>
-        Space: Play/Pause | ↑↓: Speed | F1: Overlay | F5: Listen | Esc: Pause
+      <div style={{ position: 'fixed', bottom: showTimeline ? 70 : 40, left: 20, fontSize: 10, color: '#444', pointerEvents: 'none' }}>
+        Space: Play/Pause | ↑↓: Speed | F1: Overlay | F2: Click-Through | F3: Dock Top | F4: Dock Bottom | F5: Listen | F6: Undock | Esc: Pause
       </div>
     </div>
   );

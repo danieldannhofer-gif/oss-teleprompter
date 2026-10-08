@@ -88,6 +88,78 @@ describe('parseMarkdown', () => {
   });
 });
 
+describe('parseMarkdown sections', () => {
+  test('detects headings as sections', () => {
+    const md = [
+      '## Introduction',
+      'Welcome everyone.',
+      'Today we talk about X.',
+      '',
+      '## Main Content',
+      'Here is the main part.',
+      '',
+      '## Conclusion',
+      'Thank you.',
+    ].join('\n');
+
+    const result = parseMarkdown(md);
+    expect(result.sections).toHaveLength(3);
+    expect(result.sections[0].title).toBe('Introduction');
+    expect(result.sections[1].title).toBe('Main Content');
+    expect(result.sections[2].title).toBe('Conclusion');
+  });
+
+  test('section startLine and endLine are correct', () => {
+    const md = '## Intro\nLine A\nLine B\n## Body\nLine C\nLine D\nLine E';
+    const result = parseMarkdown(md);
+
+    expect(result.sections).toHaveLength(2);
+    // Intro: heading at line 0, then Line A (1), Line B (2)
+    expect(result.sections[0].startLine).toBe(0);
+    expect(result.sections[0].endLine).toBe(2);
+    // Body: heading at line 3, then Line C (4), Line D (5), Line E (6)
+    expect(result.sections[1].startLine).toBe(3);
+    expect(result.sections[1].endLine).toBe(6);
+  });
+
+  test('h1 and h2 both create sections', () => {
+    const md = '# Title\nSome text\n## Subtitle\nMore text';
+    const result = parseMarkdown(md);
+    expect(result.sections).toHaveLength(2);
+    expect(result.sections[0].title).toBe('Title');
+    expect(result.sections[1].title).toBe('Subtitle');
+  });
+
+  test('h4+ does not create sections', () => {
+    const md = '#### Deep heading\nSome text';
+    const result = parseMarkdown(md);
+    // h4 is not a section, but should still appear as a line
+    expect(result.lines).toContain('Deep heading');
+    // Falls back to single implicit section
+    expect(result.sections).toHaveLength(1);
+    expect(result.sections[0].title).toBe('Script');
+  });
+
+  test('no headings creates single implicit section', () => {
+    const result = parseMarkdown('Just some text\nMore text here');
+    expect(result.sections).toHaveLength(1);
+    expect(result.sections[0].title).toBe('Script');
+    expect(result.sections[0].startLine).toBe(0);
+    expect(result.sections[0].endLine).toBe(result.lines.length - 1);
+  });
+
+  test('empty markdown has no sections', () => {
+    const result = parseMarkdown('');
+    expect(result.sections).toEqual([]);
+  });
+
+  test('strips formatting from section titles', () => {
+    const md = '## **Bold** and *italic* title';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].title).toBe('Bold and italic title');
+  });
+});
+
 describe('parsePlainText', () => {
   test('splits by newlines', () => {
     const result = parsePlainText('Line 1\nLine 2\nLine 3');

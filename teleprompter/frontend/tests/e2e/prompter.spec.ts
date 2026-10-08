@@ -188,4 +188,85 @@ test.describe('Teleprompter E2E', () => {
     await page.goto('/');
     await expect(page.locator('text=Space: Play/Pause')).toBeVisible();
   });
+
+  test('timeline shows sections after loading markdown', async ({ page }) => {
+    await page.goto('/');
+
+    // Import the test fixture which has headings
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // Timeline should show section pills (use button role to target timeline pills specifically)
+    await expect(page.locator('button:has-text("Introduction")')).toBeVisible();
+    await expect(page.locator('button:has-text("Main Content")')).toBeVisible();
+    await expect(page.locator('button:has-text("Conclusion")')).toBeVisible();
+  });
+
+  test('timeline shows progress counter', async ({ page }) => {
+    await page.goto('/');
+
+    // Load a script via paste
+    await page.click('button:has-text("Import Script")');
+    await page.fill('textarea', 'Line one\nLine two\nLine three');
+    await page.click('button:has-text("Load Script")');
+
+    // Progress should show "1 / 3" in the timeline (exact match to avoid StatusBar "Line 1 / 3")
+    await expect(page.locator('span:has-text("1 / 3")').last()).toBeVisible();
+  });
+
+  test('timeline section click jumps to section', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with sections
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // Click on "Conclusion" section in timeline
+    await page.locator('button:has-text("Conclusion")').click();
+
+    // Should jump to the conclusion section — verify by checking a line from that section is visible
+    await expect(page.locator('text=Thank you for your attention. Any questions?')).toBeVisible();
+  });
+
+  test('dock button toggles dock state', async ({ page }) => {
+    await page.goto('/');
+
+    // Initially not docked — button shows "Dock"
+    const dockButton = page.locator('button:has-text("Dock")');
+    await expect(dockButton).toBeVisible();
+
+    // Click to dock
+    await dockButton.click();
+
+    // Button should now show "Docked"
+    await expect(page.locator('button:has-text("Docked")')).toBeVisible();
+
+    // Click again to undock
+    await page.locator('button:has-text("Docked")').click();
+    await expect(page.locator('button:has-text("Dock")')).toBeVisible();
+  });
+
+  test('settings panel has dock controls', async ({ page }) => {
+    await page.goto('/');
+
+    // Open settings
+    await page.click('button:has-text("Settings")');
+
+    // Dock section should be visible
+    await expect(page.locator('text=Window Docking')).toBeVisible();
+    await expect(page.locator('text=Position')).toBeVisible();
+    await expect(page.locator('text=Show Timeline')).toBeVisible();
+  });
+
+  test('settings panel has font size slider', async ({ page }) => {
+    await page.goto('/');
+
+    // Open settings
+    await page.click('button:has-text("Settings")');
+
+    // Font size control should be visible
+    await expect(page.locator('text=Font Size:')).toBeVisible();
+  });
 });

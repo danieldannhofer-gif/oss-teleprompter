@@ -22,15 +22,15 @@ export function ScriptEditor({ onClose }: ScriptEditorProps) {
       if (file.name.endsWith('.docx')) {
         const buffer = await file.arrayBuffer();
         const script = await parseDocx(buffer);
-        prompter.setLines(script.lines);
+        prompter.setLines(script.lines, script.sections);
       } else {
         const content = await file.text();
         if (file.name.endsWith('.md') || file.name.endsWith('.markdown')) {
           const script = parseMarkdown(content);
-          prompter.setLines(script.lines);
+          prompter.setLines(script.lines, script.sections);
         } else {
           const script = parsePlainText(content);
-          prompter.setLines(script.lines);
+          prompter.setLines(script.lines, script.sections);
         }
       }
       onClose();
@@ -42,7 +42,7 @@ export function ScriptEditor({ onClose }: ScriptEditorProps) {
   const handlePaste = () => {
     try {
       const script = parsePlainText(text);
-      prompter.setLines(script.lines);
+      prompter.setLines(script.lines, script.sections);
       onClose();
     } catch (err) {
       setError(`Failed to parse: ${err instanceof Error ? err.message : 'Unknown error'}`);

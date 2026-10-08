@@ -1,7 +1,14 @@
 // Shared TypeScript types for the Teleprompter frontend
 
+export interface Section {
+  title: string;
+  startLine: number;
+  endLine: number;
+}
+
 export interface Script {
   lines: string[];
+  sections: Section[];
   rawText: string;
   sourceFormat: 'markdown' | 'docx' | 'plain';
 }
@@ -29,6 +36,9 @@ export interface Settings {
   clickThrough: boolean;
   alwaysOnTop: boolean;
   autoStartListening: boolean;
+  dockPosition: 'none' | 'top' | 'bottom';
+  dockHeightPercent: number;
+  showTimeline: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -42,4 +52,7 @@ export const DEFAULT_SETTINGS: Settings = {
   clickThrough: false,
   alwaysOnTop: false,
   autoStartListening: false,
+  dockPosition: 'none',
+  dockHeightPercent: 60,
+  showTimeline: true,
 };

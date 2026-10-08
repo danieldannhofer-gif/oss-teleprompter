@@ -1,51 +1,86 @@
 import { marked } from 'marked';
 import mammoth from 'mammoth';
-import type { Script } from './types';
+import type { Script, Section } from './types';
 
 /**
  * Parse Markdown text into script lines.
  * Strips formatting, preserves paragraph structure.
+ * Detects headings (h1-h3) as sections for timeline navigation.
  */
 export function parseMarkdown(text: string): Script {
-  // Use marked to tokenize, then extract text per block
   const tokens = marked.lexer(text);
   const lines: string[] = [];
+  const sections: Section[] = [];
 
   for (const token of tokens) {
-    if (token.type === 'paragraph' || token.type === 'heading' || token.type === 'text') {
+    if (token.type === 'heading' && token.depth <= 3) {
+      // Heading h1-h3 — strip markdown, record as section start
+      const title = token.text
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
+        .trim();
+      if (title) {
+        lines.push(title);
+        sections.push({ title, startLine: lines.length - 1, endLine: lines.length - 1 });
+      }
+    } else if (token.type === 'heading') {
+      // Heading h4+ — treat as regular text line (no section)
+      const title = token.text
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
+        .trim();
+      if (title) {
+        lines.push(title);
+        if (sections.length > 0) {
+          sections[sections.length - 1].endLine = lines.length - 1;
+        }
+      }
+    } else if (token.type === 'paragraph' || token.type === 'text') {
       const raw = 'raw' in token ? token.raw : '';
-      // Strip markdown formatting from raw text
       const plain = raw
-        .replace(/^#+\s*/, '')           // headings
-        .replace(/\*\*(.+?)\*\*/g, '$1') // bold
-        .replace(/\*(.+?)\*/g, '$1')     // italic
-        .replace(/`(.+?)`/g, '$1')       // code
-        .replace(/\[(.+?)\]\(.+?\)/g, '$1') // links
-        .replace(/^\s*[-*+]\s+/gm, '')   // list markers
-        .replace(/^\s*\d+\.\s+/gm, '')   // numbered lists
+        .replace(/^#+\s*/, '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/`(.+?)`/g, '$1')
+        .replace(/\[(.+?)\]\(.+?\)/g, '$1')
+        .replace(/^\s*[-*+]\s+/gm, '')
+        .replace(/^\s*\d+\.\s+/gm, '')
         .trim();
 
       if (plain) {
-        // Split multi-line paragraphs into separate lines
         for (const line of plain.split('\n')) {
           const trimmed = line.trim();
           if (trimmed) lines.push(trimmed);
         }
+        // Extend the last section's endLine to cover these lines
+        if (sections.length > 0) {
+          sections[sections.length - 1].endLine = lines.length - 1;
+        }
       }
-    } else if (token.type === 'space') {
-      // paragraph break — already handled by line splitting
     } else if (token.type === 'list') {
       for (const item of token.items) {
         const plain = item.text
           .replace(/\*\*(.+?)\*\*/g, '$1')
           .replace(/\*(.+?)\*/g, '$1')
           .trim();
-        if (plain) lines.push(plain);
+        if (plain) {
+          lines.push(plain);
+          if (sections.length > 0) {
+            sections[sections.length - 1].endLine = lines.length - 1;
+          }
+        }
       }
     }
   }
 
-  return { lines, rawText: text, sourceFormat: 'markdown' };
+  // If no headings found, create a single implicit section
+  if (sections.length === 0 && lines.length > 0) {
+    sections.push({ title: 'Script', startLine: 0, endLine: lines.length - 1 });
+  }
+
+  return { lines, sections, rawText: text, sourceFormat: 'markdown' };
 }
 
 /**
@@ -62,7 +97,11 @@ export async function parseDocx(buffer: ArrayBuffer): Promise<Script> {
     .map((l) => l.trim())
     .filter((l) => l.length > 0);
 
-  return { lines, rawText: result.value, sourceFormat: 'docx' };
+  const sections: Section[] = lines.length > 0
+    ? [{ title: 'Document', startLine: 0, endLine: lines.length - 1 }]
+    : [];
+
+  return { lines, sections, rawText: result.value, sourceFormat: 'docx' };
 }
 
 /**
@@ -74,7 +113,11 @@ export function parsePlainText(text: string): Script {
     .map((l) => l.trim())
     .filter((l) => l.length > 0);
 
-  return { lines, rawText: text, sourceFormat: 'plain' };
+  const sections: Section[] = lines.length > 0
+    ? [{ title: 'Script', startLine: 0, endLine: lines.length - 1 }]
+    : [];
+
+  return { lines, sections, rawText: text, sourceFormat: 'plain' };
 }
 
 /**
