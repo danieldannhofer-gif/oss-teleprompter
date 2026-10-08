@@ -107,6 +107,17 @@ export function Timeline() {
                 }}
               />
               {section.title}
+              {section.timeCode && (
+                <span
+                  style={{
+                    color: status === 'current' ? 'rgba(255,255,255,0.7)' : '#666',
+                    fontSize: 10,
+                    fontWeight: 400,
+                  }}
+                >
+                  {section.timeCode}
+                </span>
+              )}
             </button>
           );
         })}

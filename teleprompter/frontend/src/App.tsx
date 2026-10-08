@@ -11,6 +11,7 @@ import { PrompterView } from './components/PrompterView';
 import { StatusBar } from './components/StatusBar';
 import { ScriptEditor } from './components/ScriptEditor';
 import { Timeline } from './components/Timeline';
+import { TimeBar } from './components/TimeBar';
 
 type DockPosition = 'none' | 'top' | 'bottom';
 
@@ -230,6 +231,7 @@ function App() {
 
       <PrompterView />
       <StatusBar />
+      <TimeBar />
       {showTimeline && <Timeline />}
 
       {showSettings && (
