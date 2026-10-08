@@ -21,6 +21,8 @@ set(SOURCES
     src/speech/audio.cpp
     src/speech/model.cpp
     src/speech/recognizer.cpp
+    src/script/matcher.cpp
+    src/utils/string_utils.cpp
 )
 
 set(HEADERS
@@ -30,6 +32,9 @@ set(HEADERS
     src/speech/audio.h
     src/speech/model.h
     src/speech/recognizer.h
+    src/script/types.h
+    src/script/matcher.h
+    src/utils/string_utils.h
 )
 
 # --- Executable ---
@@ -94,7 +99,17 @@ if(BUILD_TESTS)
     target_link_libraries(audio_test PRIVATE GTest::gtest_main avrt)
     add_test(NAME audio_test COMMAND audio_test)
 
-    # More test executables will be added in later tasks
+    # String utils test
+    add_executable(string_utils_test tests/cpp/string_utils_test.cpp src/utils/string_utils.cpp)
+    target_include_directories(string_utils_test PRIVATE src)
+    target_link_libraries(string_utils_test PRIVATE GTest::gtest_main)
+    add_test(NAME string_utils_test COMMAND string_utils_test)
+
+    # Matcher test
+    add_executable(matcher_test tests/cpp/matcher_test.cpp src/script/matcher.cpp src/utils/string_utils.cpp)
+    target_include_directories(matcher_test PRIVATE src)
+    target_link_libraries(matcher_test PRIVATE GTest::gtest_main)
+    add_test(NAME matcher_test COMMAND matcher_test)
 endif()
 
 # --- Post-build: copy WebView2 loader DLL ---
