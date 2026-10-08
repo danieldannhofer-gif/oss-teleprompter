@@ -85,3 +85,41 @@ void SetAlwaysOnTop(HWND hwnd, bool enabled) {
     SetWindowPos(hwnd, enabled ? HWND_TOPMOST : HWND_NOTOPMOST,
         0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 }
+
+void SetDock(HWND hwnd, const char* position, int heightPercent) {
+    // Clamp height to 10-90%
+    if (heightPercent < 10) heightPercent = 10;
+    if (heightPercent > 90) heightPercent = 90;
+
+    // Get the monitor nearest to the window
+    HMONITOR hMonitor = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+    MONITORINFO mi = {};
+    mi.cbSize = sizeof(mi);
+    GetMonitorInfo(hMonitor, &mi);
+
+    int screenW = mi.rcMonitor.right - mi.rcMonitor.left;
+    int screenH = mi.rcMonitor.bottom - mi.rcMonitor.top;
+    int dockH = screenH * heightPercent / 100;
+
+    std::string pos(position);
+
+    if (pos == "none") {
+        // Undock — restore normal overlapped window
+        SetWindowLongPtr(hwnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
+        SetWindowPos(hwnd, nullptr, 0, 0, 0, 0,
+            SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER);
+        return;
+    }
+
+    // Make borderless for docking
+    LONG_PTR style = GetWindowLongPtr(hwnd, GWL_STYLE);
+    style &= ~(WS_CAPTION | WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_SYSMENU);
+    SetWindowLongPtr(hwnd, GWL_STYLE, style);
+
+    int y = (pos == "top") ? mi.rcMonitor.top : mi.rcMonitor.bottom - dockH;
+
+    SetWindowPos(hwnd, HWND_TOPMOST,
+        mi.rcMonitor.left, y,
+        screenW, dockH,
+        SWP_FRAMECHANGED | SWP_NOZORDER);
+}

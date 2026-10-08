@@ -6,6 +6,9 @@ interface KeyboardHandlers {
   onToggleOverlay?: () => void;
   onToggleClickThrough?: () => void;
   onStartStopListening?: () => void;
+  onDockTop?: () => void;
+  onDockBottom?: () => void;
+  onDockNone?: () => void;
 }
 
 /**
@@ -16,9 +19,13 @@ interface KeyboardHandlers {
  * | Space | Play/Pause |
  * | Arrow Up/Down | Speed +/- |
  * | Home / End | Jump to start / end |
+ * | PageUp / PageDown | Previous / next line |
  * | F1 | Toggle overlay |
  * | F2 | Toggle click-through |
+ * | F3 | Dock to top |
+ * | F4 | Dock to bottom |
  * | F5 | Start/stop listening |
+ * | F6 | Undock (free window) |
  * | Escape | Pause |
  */
 export function useKeyboard(handlers: KeyboardHandlers) {
@@ -60,9 +67,21 @@ export function useKeyboard(handlers: KeyboardHandlers) {
           e.preventDefault();
           handlers.onToggleClickThrough?.();
           break;
+        case 'F3':
+          e.preventDefault();
+          handlers.onDockTop?.();
+          break;
+        case 'F4':
+          e.preventDefault();
+          handlers.onDockBottom?.();
+          break;
         case 'F5':
           e.preventDefault();
           handlers.onStartStopListening?.();
+          break;
+        case 'F6':
+          e.preventDefault();
+          handlers.onDockNone?.();
           break;
         case 'Escape':
           prompter.pause();

@@ -42,6 +42,28 @@ void HandleWebMessage(const wchar_t* message) {
         bool enabled = msg.find(L"\"enabled\":true") != std::wstring::npos;
         SetAlwaysOnTop(g_mainWindow, enabled);
     }
+    // Dock messages: {"type":"window:dock","position":"top","heightPercent":60}
+    else if (msg.find(L"\"type\":\"window:dock\"") != std::wstring::npos) {
+        // Extract position
+        std::string position = "none";
+        size_t posPos = msg.find(L"\"position\":\"");
+        if (posPos != std::wstring::npos) {
+            posPos += 12;
+            size_t endPos = msg.find(L"\"", posPos);
+            if (endPos != std::wstring::npos) {
+                std::wstring wpos = msg.substr(posPos, endPos - posPos);
+                position = std::string(wpos.begin(), wpos.end());
+            }
+        }
+        // Extract heightPercent
+        int heightPercent = 60;
+        size_t hPos = msg.find(L"\"heightPercent\":");
+        if (hPos != std::wstring::npos) {
+            hPos += 16;
+            heightPercent = std::stoi(msg.substr(hPos));
+        }
+        SetDock(g_mainWindow, position.c_str(), heightPercent);
+    }
     // Speech messages
     else if (msg.find(L"\"type\":\"speech:start\"") != std::wstring::npos) {
         if (!g_recognizer) {

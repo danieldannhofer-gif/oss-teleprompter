@@ -1,7 +1,9 @@
 import { create } from 'zustand';
+import type { Section } from '../lib/types';
 
 interface PrompterState {
   lines: string[];
+  sections: Section[];
   currentIndex: number;
   isPlaying: boolean;
   speed: number;
@@ -10,7 +12,7 @@ interface PrompterState {
   textColor: string;
 
   // Actions
-  setLines: (lines: string[]) => void;
+  setLines: (lines: string[], sections?: Section[]) => void;
   play: () => void;
   pause: () => void;
   togglePlay: () => void;
@@ -26,6 +28,7 @@ interface PrompterState {
 
 export const usePrompter = create<PrompterState>((set) => ({
   lines: [],
+  sections: [],
   currentIndex: 0,
   isPlaying: false,
   speed: 1.0,
@@ -33,7 +36,11 @@ export const usePrompter = create<PrompterState>((set) => ({
   fontFamily: 'Segoe UI, system-ui, sans-serif',
   textColor: '#ffffff',
 
-  setLines: (lines) => set({ lines, currentIndex: 0 }),
+  setLines: (lines, sections) => set({
+    lines,
+    sections: sections ?? (lines.length > 0 ? [{ title: 'Script', startLine: 0, endLine: lines.length - 1 }] : []),
+    currentIndex: 0,
+  }),
   play: () => set({ isPlaying: true }),
   pause: () => set({ isPlaying: false }),
   togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
