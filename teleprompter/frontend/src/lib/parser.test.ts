@@ -1,5 +1,12 @@
 import { describe, test, expect } from 'vitest';
-import { parseMarkdown, parsePlainText, parseScript } from './parser';
+import { readFileSync } from 'fs';
+import { resolve } from 'path';
+import { parseMarkdown, parsePlainText, parseDocx, parseScript } from './parser';
+
+function loadDocxFixture(): ArrayBuffer {
+  const buf = readFileSync(resolve(__dirname, '../../public/fixtures/sample.docx'));
+  return buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) as ArrayBuffer;
+}
 
 describe('parseMarkdown', () => {
   test('strips heading markers', () => {
@@ -131,5 +138,33 @@ describe('parseScript', () => {
   test('falls back to plain text for unknown extensions', async () => {
     const result = await parseScript('Hello', 'script.xyz');
     expect(result.sourceFormat).toBe('plain');
+  });
+});
+
+describe('parseDocx', () => {
+  test('extracts text from DOCX fixture', async () => {
+    const buffer = loadDocxFixture();
+    const result = await parseDocx(buffer);
+    expect(result.sourceFormat).toBe('docx');
+    expect(result.lines.length).toBeGreaterThan(0);
+    expect(result.rawText).toContain('Welcome to the teleprompter test document');
+    expect(result.rawText).toContain('quick brown fox');
+    expect(result.rawText).toContain('Thank you for your attention');
+  });
+
+  test('DOCX lines are non-empty and trimmed', async () => {
+    const buffer = loadDocxFixture();
+    const result = await parseDocx(buffer);
+    for (const line of result.lines) {
+      expect(line.length).toBeGreaterThan(0);
+      expect(line).toBe(line.trim());
+    }
+  });
+
+  test('parseScript detects DOCX by ArrayBuffer', async () => {
+    const buffer = loadDocxFixture();
+    const result = await parseScript(buffer, 'document.docx');
+    expect(result.sourceFormat).toBe('docx');
+    expect(result.lines.length).toBeGreaterThan(0);
   });
 });

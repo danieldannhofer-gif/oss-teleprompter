@@ -52,7 +52,11 @@ export function parseMarkdown(text: string): Script {
  * Parse DOCX (Word) file into script lines.
  */
 export async function parseDocx(buffer: ArrayBuffer): Promise<Script> {
-  const result = await mammoth.extractRawText({ arrayBuffer: buffer });
+  // mammoth.js uses { arrayBuffer } in browsers (WebView2) and { buffer } in Node.js (tests)
+  const input = typeof Buffer !== 'undefined'
+    ? { buffer: Buffer.from(buffer) }
+    : { arrayBuffer: buffer };
+  const result = await mammoth.extractRawText(input as Parameters<typeof mammoth.extractRawText>[0]);
   const lines = result.value
     .split('\n')
     .map((l) => l.trim())
