@@ -1,0 +1,14 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package Name="Teleprompter" Manufacturer="augmented work" Version="0.1.0"
+           UpgradeCode="7D3A9C2B-1F4E-4E6B-9A2D-0C5B8E1F2A34" Language="1031,1033">
+    <MajorUpgrade DowngradeErrorMessage="A newer version is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <Feature Id="Main" Title="Teleprompter" Level="1">
+      <Files Include="..\build\Release\Teleprompter.exe" />
+    </Feature>
+
+    <!-- WebView2 Runtime is a prerequisite; the bootstrapper should detect
+         it and chain the WebView2 Evergreen installer if missing. -->
+  </Package>
+</Wix>
