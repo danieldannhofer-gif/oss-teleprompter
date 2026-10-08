@@ -4,6 +4,10 @@ export interface Section {
   title: string;
   startLine: number;
   endLine: number;
+  /** Duration in minutes, parsed from heading (e.g. "## Intro (5 min)") */
+  durationMinutes?: number;
+  /** Original timecode string if present (e.g. "0:00-5:00") */
+  timeCode?: string;
 }
 
 export interface Script {

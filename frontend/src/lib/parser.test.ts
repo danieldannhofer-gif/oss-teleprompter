@@ -160,6 +160,80 @@ describe('parseMarkdown sections', () => {
   });
 });
 
+describe('parseMarkdown timecodes', () => {
+  test('extracts duration from "(5 min)" syntax', () => {
+    const md = '## Introduction (5 min)\nWelcome everyone.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].title).toBe('Introduction');
+    expect(result.sections[0].durationMinutes).toBe(5);
+    expect(result.sections[0].timeCode).toBe('5m');
+  });
+
+  test('extracts duration from "(5m)" short syntax', () => {
+    const md = '## Main Content (10m)\nHere we go.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].title).toBe('Main Content');
+    expect(result.sections[0].durationMinutes).toBe(10);
+  });
+
+  test('extracts duration from "[0:00-5:00]" range syntax', () => {
+    const md = '## Intro [0:00-5:00]\nWelcome.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].title).toBe('Intro');
+    expect(result.sections[0].durationMinutes).toBe(5);
+    expect(result.sections[0].timeCode).toBe('0:00-5:00');
+  });
+
+  test('extracts duration from "[10:00-20:00]" range (10 min)', () => {
+    const md = '## Workshop [10:00-20:00]\nLet us begin.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].durationMinutes).toBe(10);
+    expect(result.sections[0].timeCode).toBe('10:00-20:00');
+  });
+
+  test('extracts duration from "[1:00:00-1:30:00]" range (30 min)', () => {
+    const md = '## Long Talk [1:00:00-1:30:00]\nDeep dive.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].durationMinutes).toBe(30);
+  });
+
+  test('timecode is removed from the line text', () => {
+    const md = '## Introduction (5 min)\nWelcome.';
+    const result = parseMarkdown(md);
+    expect(result.lines[0]).toBe('Introduction');
+    expect(result.lines[0]).not.toContain('5 min');
+  });
+
+  test('section without timecode has no durationMinutes', () => {
+    const md = '## Plain Section\nNo time here.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].durationMinutes).toBeUndefined();
+    expect(result.sections[0].timeCode).toBeUndefined();
+  });
+
+  test('multiple sections with timecodes', () => {
+    const md = [
+      '## Intro (2 min)',
+      'Welcome.',
+      '## Main (10 min)',
+      'Content here.',
+      '## Q&A (5 min)',
+      'Questions?',
+    ].join('\n');
+    const result = parseMarkdown(md);
+    expect(result.sections).toHaveLength(3);
+    expect(result.sections[0].durationMinutes).toBe(2);
+    expect(result.sections[1].durationMinutes).toBe(10);
+    expect(result.sections[2].durationMinutes).toBe(5);
+  });
+
+  test('case insensitive min suffix', () => {
+    const md = '## Talk (15 MIN)\nHello.';
+    const result = parseMarkdown(md);
+    expect(result.sections[0].durationMinutes).toBe(15);
+  });
+});
+
 describe('parsePlainText', () => {
   test('splits by newlines', () => {
     const result = parsePlainText('Line 1\nLine 2\nLine 3');

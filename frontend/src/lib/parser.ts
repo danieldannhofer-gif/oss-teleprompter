@@ -3,9 +3,52 @@ import mammoth from 'mammoth';
 import type { Script, Section } from './types';
 
 /**
+ * Extract timecode from a heading title.
+ * Supports: "(5 min)", "(5m)", "[0:00-5:00]", "[10:00-20:00]"
+ * Returns { title, durationMinutes, timeCode }.
+ */
+function extractTimeCode(rawTitle: string): {
+  title: string;
+  durationMinutes?: number;
+  timeCode?: string;
+} {
+  let title = rawTitle;
+  let durationMinutes: number | undefined;
+  let timeCode: string | undefined;
+
+  // Pattern 1: [0:00-5:00] or [10:00-20:00] — time range
+  const rangeMatch = title.match(/\s*\[(\d{1,2}:\d{2}(?::\d{2})?\s*-\s*\d{1,2}:\d{2}(?::\d{2})?)\]\s*$/);
+  if (rangeMatch) {
+    timeCode = rangeMatch[1].replace(/\s/g, '');
+    title = title.slice(0, rangeMatch.index).trim();
+    // Calculate duration from range
+    const parts = timeCode.split('-');
+    const parseTime = (t: string): number => {
+      const segs = t.split(':').map(Number);
+      if (segs.length === 3) return segs[0] * 3600 + segs[1] * 60 + segs[2];
+      return segs[0] * 60 + segs[1];
+    };
+    const startSec = parseTime(parts[0]);
+    const endSec = parseTime(parts[1]);
+    durationMinutes = Math.round((endSec - startSec) / 60);
+  }
+
+  // Pattern 2: (5 min) or (5m) — duration
+  const durMatch = title.match(/\s*\((\d+)\s*(?:min|m)\)\s*$/i);
+  if (durMatch) {
+    durationMinutes = parseInt(durMatch[1], 10);
+    timeCode = timeCode ?? `${durationMinutes}m`;
+    title = title.slice(0, durMatch.index).trim();
+  }
+
+  return { title, durationMinutes, timeCode };
+}
+
+/**
  * Parse Markdown text into script lines.
  * Strips formatting, preserves paragraph structure.
  * Detects headings (h1-h3) as sections for timeline navigation.
+ * Extracts timecodes from headings: "## Intro (5 min)" or "## Intro [0:00-5:00]"
  */
 export function parseMarkdown(text: string): Script {
   const tokens = marked.lexer(text);
@@ -14,15 +57,19 @@ export function parseMarkdown(text: string): Script {
 
   for (const token of tokens) {
     if (token.type === 'heading' && token.depth <= 3) {
-      // Heading h1-h3 — strip markdown, record as section start
-      const title = token.text
+      // Heading h1-h3 — strip markdown, extract timecode, record as section
+      const rawTitle = token.text
         .replace(/\*\*(.+?)\*\*/g, '$1')
         .replace(/\*(.+?)\*/g, '$1')
         .replace(/`(.+?)`/g, '$1')
         .trim();
+      const { title, durationMinutes, timeCode } = extractTimeCode(rawTitle);
       if (title) {
         lines.push(title);
-        sections.push({ title, startLine: lines.length - 1, endLine: lines.length - 1 });
+        const section: Section = { title, startLine: lines.length - 1, endLine: lines.length - 1 };
+        if (durationMinutes !== undefined) section.durationMinutes = durationMinutes;
+        if (timeCode !== undefined) section.timeCode = timeCode;
+        sections.push(section);
       }
     } else if (token.type === 'heading') {
       // Heading h4+ — treat as regular text line (no section)

@@ -269,4 +269,75 @@ test.describe('Teleprompter E2E', () => {
     // Font size control should be visible
     await expect(page.locator('text=Font Size:')).toBeVisible();
   });
+
+  test('timebar shows after loading script with timecodes', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with timecodes
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // TimeBar should show the first section with timecode — use monospace time display
+    await expect(page.locator('text=(2m)').first()).toBeVisible();
+    // Total time: 2 min = 02:00
+    await expect(page.locator('text=/ 02:00')).toBeVisible();
+  });
+
+  test('timeline shows timecodes on section pills', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with timecodes
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // Section pills should show timecodes
+    await expect(page.locator('button:has-text("Introduction"):has-text("1m")')).toBeVisible();
+    await expect(page.locator('button:has-text("Main Content"):has-text("5m")')).toBeVisible();
+    await expect(page.locator('button:has-text("Conclusion"):has-text("1m")')).toBeVisible();
+  });
+
+  test('timebar shows paused state initially', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with timecodes
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // TimeBar should show "Paused" when not playing
+    await expect(page.locator('text=Paused')).toBeVisible();
+  });
+
+  test('timebar shows running state when playing', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with timecodes
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // Start playing
+    await page.click('button:has-text("Play")');
+
+    // TimeBar should show "Running" — wait a moment for the timer to start
+    await expect(page.locator('text=Running')).toBeVisible({ timeout: 3000 });
+  });
+
+  test('timebar switches section when jumping', async ({ page }) => {
+    await page.goto('/');
+
+    // Import fixture with timecodes
+    await page.click('button:has-text("Import Script")');
+    const fileInput = page.locator('input[type="file"]');
+    await fileInput.setInputFiles('./public/fixtures/test-script.md');
+
+    // Click on "Main Content" section in timeline
+    await page.locator('button:has-text("Main Content")').click();
+
+    // TimeBar should now show Main Content with 5 min
+    await expect(page.locator('text=(5m)').first()).toBeVisible();
+    await expect(page.locator('text=/ 05:00')).toBeVisible();
+  });
 });
