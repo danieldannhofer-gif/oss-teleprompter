@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WiX Toolset 4 installer definition for Teleprompter -->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+    Name="Teleprompter"
+    Manufacturer="Augmented Work"
+    Version="0.1.0"
+    UpgradeCode="A3F5B2C1-7D4E-4A8B-9C1F-2E6D8A0B4C5E"
+    Scope="perMachine">
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of Teleprompter is already installed." />
+
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- WebView2 Runtime prerequisite check -->
+    <Launch Condition="Installed"
+            Message="This application requires the Microsoft Edge WebView2 Runtime. Please install it from https://developer.microsoft.com/microsoft-edge/webview2/" />
+
+    <Feature Id="Main" Title="Teleprompter" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentGroupRef Id="ModelFiles" />
+    </Feature>
+
+    <!-- Installation directory -->
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="Teleprompter">
+        <Directory Id="MODELSFOLDER" Name="models" />
+      </Directory>
+    </StandardDirectory>
+
+    <!-- Start Menu shortcut -->
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="ApplicationProgramsFolder" Name="Teleprompter" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component Id="MainExecutable" Guid="B4E6C8A0-1D3F-4B5A-8C7E-9F0A2B4C6D8E">
+        <File Id="TeleprompterExe" Source="$(var.TeleprompterExe)" KeyPath="yes" />
+        <File Id="WebView2LoaderDll" Source="$(var.TeleprompterExeDir)WebView2Loader.dll" />
+      </Component>
+      <Component Id="StartMenuShortcut" Guid="C5F7D9B1-2E4A-5C6B-9D8F-0A1B3C5D7E9F"
+                 Directory="ApplicationProgramsFolder">
+        <Shortcut Id="AppShortcut"
+                  Name="Teleprompter"
+                  Target="[INSTALLFOLDER]Teleprompter.exe"
+                  WorkingDirectory="INSTALLFOLDER" />
+        <RemoveFolder Id="CleanupShortcut" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Teleprompter" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+    <ComponentGroup Id="ModelFiles" Directory="MODELSFOLDER">
+      <Component Id="WhisperModel" Guid="D6A8E0C2-3F5B-6D7C-0E9A-1B2C4D6E8F0A">
+        <File Id="GgmlBaseBin" Source="$(var.ModelDir)ggml-base.bin" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
+
+  </Package>
+</Wix>
