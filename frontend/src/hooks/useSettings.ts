@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { usePrompter } from './usePrompter';
 import { useOverlay } from './useOverlay';
 import { setLocale, getLocale, type Locale } from '../lib/i18n';
@@ -30,6 +30,7 @@ function saveSettings(settings: Partial<Settings>): void {
 export function useSettings() {
   const prompter = usePrompter();
   const overlay = useOverlay();
+  const [currentLanguage, setCurrentLanguage] = useState<Locale>(getLocale());
 
   // Load settings on mount
   useEffect(() => {
@@ -40,6 +41,7 @@ export function useSettings() {
     if (saved.textColor !== undefined) prompter.setTextColor(saved.textColor);
     if (saved.language) {
       setLocale(saved.language === 'de' ? 'de' : 'en');
+      setCurrentLanguage(saved.language === 'de' ? 'de' : 'en');
     }
   }, []);
 
@@ -50,17 +52,18 @@ export function useSettings() {
       fontSize: prompter.fontSize,
       fontFamily: prompter.fontFamily,
       textColor: prompter.textColor,
-      language: getLocale(),
+      language: currentLanguage,
       overlayEnabled: overlay.isOverlay,
       clickThrough: overlay.isClickThrough,
       alwaysOnTop: overlay.isAlwaysOnTop,
     });
-  }, [prompter.speed, prompter.fontSize, prompter.fontFamily, prompter.textColor, overlay]);
+  }, [prompter.speed, prompter.fontSize, prompter.fontFamily, prompter.textColor, currentLanguage, overlay]);
 
   const setLanguage = (lang: Locale) => {
     setLocale(lang);
+    setCurrentLanguage(lang);
     saveSettings({ language: lang });
   };
 
-  return { setLanguage, currentLanguage: getLocale() };
+  return { setLanguage, currentLanguage };
 }

@@ -25,3 +25,9 @@ build/webview2.zip
 
 # Whisper models (downloaded at runtime)
 frontend/public/models/*.bin
+
+# Playwright test artifacts
+frontend/playwright-report/
+frontend/test-results/
+frontend/blob-report/
+
