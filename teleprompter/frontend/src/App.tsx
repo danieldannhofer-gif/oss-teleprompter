@@ -5,11 +5,13 @@ import { usePrompter } from './hooks/usePrompter';
 import { SettingsPanel } from './components/SettingsPanel';
 import { PrompterView } from './components/PrompterView';
 import { StatusBar } from './components/StatusBar';
+import { ScriptEditor } from './components/ScriptEditor';
 
 function App() {
   const overlay = useOverlay();
   const prompter = usePrompter();
   const [showSettings, setShowSettings] = useState(false);
+  const [showEditor, setShowEditor] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
 
   const voice = useVoiceTracking(voiceEnabled && prompter.lines.length > 0);
@@ -40,6 +42,22 @@ function App() {
         <h1 style={{ margin: 0, fontSize: 18 }}>Teleprompter</h1>
 
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          {/* Script import */}
+          <button
+            onClick={() => setShowEditor(true)}
+            style={{
+              padding: '6px 14px',
+              fontSize: 13,
+              cursor: 'pointer',
+              background: '#2563eb',
+              color: '#fff',
+              border: 'none',
+              borderRadius: 4,
+            }}
+          >
+            Import Script
+          </button>
+
           {/* Voice tracking toggle */}
           <button
             onClick={() => {
@@ -139,6 +157,9 @@ function App() {
           <SettingsPanel overlay={overlay} />
         </div>
       )}
+
+      {/* Script editor modal */}
+      {showEditor && <ScriptEditor onClose={() => setShowEditor(false)} />}
     </div>
   );
 }
