@@ -19,6 +19,8 @@ set(SOURCES
     src/webview.cpp
     src/ipc.cpp
     src/speech/audio.cpp
+    src/speech/model.cpp
+    src/speech/recognizer.cpp
 )
 
 set(HEADERS
@@ -26,6 +28,8 @@ set(HEADERS
     src/webview.h
     src/ipc.h
     src/speech/audio.h
+    src/speech/model.h
+    src/speech/recognizer.h
 )
 
 # --- Executable ---
@@ -63,9 +67,13 @@ target_link_libraries(Teleprompter PRIVATE
     avrt
 )
 
-# --- Whisper.cpp (added in Task 4) ---
-# add_subdirectory(third_party/whisper.cpp)
-# target_link_libraries(Teleprompter PRIVATE whisper)
+# --- Whisper.cpp ---
+set(WHISPER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(WHISPER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(WHISPER_BUILD_SERVER OFF CACHE BOOL "" FORCE)
+add_subdirectory(third_party/whisper.cpp)
+target_link_libraries(Teleprompter PRIVATE whisper)
+target_include_directories(Teleprompter PRIVATE third_party/whisper.cpp/include third_party/whisper.cpp/ggml/include)
 
 # --- Google Test (for C++ unit tests) ---
 option(BUILD_TESTS "Build C++ unit tests" ON)
