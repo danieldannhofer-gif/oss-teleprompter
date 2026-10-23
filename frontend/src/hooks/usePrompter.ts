@@ -10,6 +10,7 @@ interface PrompterState {
   fontSize: number;
   fontFamily: string;
   textColor: string;
+  backgroundOpacity: number;
 
   // Actions
   setLines: (lines: string[], sections?: Section[]) => void;
@@ -23,6 +24,7 @@ interface PrompterState {
   setFontSize: (size: number) => void;
   setFontFamily: (family: string) => void;
   setTextColor: (color: string) => void;
+  setBackgroundOpacity: (opacity: number) => void;
   reset: () => void;
 }
 
@@ -35,12 +37,25 @@ export const usePrompter = create<PrompterState>((set) => ({
   fontSize: 32,
   fontFamily: 'Segoe UI, system-ui, sans-serif',
   textColor: '#ffffff',
+  backgroundOpacity: 0.85,
 
-  setLines: (lines, sections) => set({
-    lines,
-    sections: sections ?? (lines.length > 0 ? [{ title: 'Script', startLine: 0, endLine: lines.length - 1 }] : []),
-    currentIndex: 0,
-  }),
+  setLines: (lines, sections) => {
+    set({
+      lines,
+      sections: sections ?? (lines.length > 0 ? [{ title: 'Script', startLine: 0, endLine: lines.length - 1 }] : []),
+      currentIndex: 0,
+    });
+    // Dispatch auto-start listening event if enabled in settings
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      if (raw) {
+        const settings = JSON.parse(raw);
+        if (settings.autoStartListening === true && lines.length > 0) {
+          window.dispatchEvent(new CustomEvent('teleprompter:autoStartListening'));
+        }
+      }
+    } catch { /* ignore */ }
+  },
   play: () => set({ isPlaying: true }),
   pause: () => set({ isPlaying: false }),
   togglePlay: () => set((s) => ({ isPlaying: !s.isPlaying })),
@@ -57,5 +72,6 @@ export const usePrompter = create<PrompterState>((set) => ({
   setFontSize: (fontSize) => set({ fontSize }),
   setFontFamily: (fontFamily) => set({ fontFamily }),
   setTextColor: (textColor) => set({ textColor }),
+  setBackgroundOpacity: (backgroundOpacity) => set({ backgroundOpacity: Math.max(0, Math.min(1, backgroundOpacity)) }),
   reset: () => set({ currentIndex: 0, isPlaying: false }),
 }));

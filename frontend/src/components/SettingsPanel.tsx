@@ -52,6 +52,12 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
   const [showTimeline, setShowTimeline] = useState<boolean>(
     () => loadSetting<boolean>('showTimeline', true)
   );
+  const [backgroundOpacity, setBackgroundOpacityState] = useState<number>(
+    () => loadSetting<number>('backgroundOpacity', 0.85)
+  );
+  const [autoStartListening, setAutoStartListening] = useState<boolean>(
+    () => loadSetting<boolean>('autoStartListening', false)
+  );
 
   // Apply dock on mount
   useEffect(() => {
@@ -59,6 +65,19 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
       windowMessages.dock(dockPosition, dockHeight);
     }
   }, []);
+
+  // Load background opacity into prompter store on mount
+  useEffect(() => {
+    prompter.setBackgroundOpacity(backgroundOpacity);
+  }, []);
+
+  // Apply background opacity to the app root element
+  useEffect(() => {
+    const appRoot = document.querySelector('div[style*="min-height: 100vh"]') as HTMLElement | null;
+    if (appRoot) {
+      appRoot.style.background = `rgba(0, 0, 0, ${backgroundOpacity})`;
+    }
+  }, [backgroundOpacity]);
 
   const handleDockChange = (pos: DockPosition) => {
     setDockPosition(pos);
@@ -79,6 +98,20 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
     saveSetting('showTimeline', show);
     // Dispatch event so App can react
     window.dispatchEvent(new CustomEvent('teleprompter:timelineToggle', { detail: { show } }));
+  };
+
+  const handleBackgroundOpacityChange = (value: number) => {
+    const clamped = Math.max(0, Math.min(1, value));
+    setBackgroundOpacityState(clamped);
+    saveSetting('backgroundOpacity', clamped);
+    prompter.setBackgroundOpacity(clamped);
+  };
+
+  const handleAutoStartListeningToggle = (enabled: boolean) => {
+    setAutoStartListening(enabled);
+    saveSetting('autoStartListening', enabled);
+    // Dispatch event so App can react
+    window.dispatchEvent(new CustomEvent('teleprompter:autoStartListeningToggle', { detail: { enabled } }));
   };
 
   const checkboxStyle = { marginRight: 8 };
@@ -198,6 +231,28 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
             style={{ width: 100, cursor: 'pointer' }}
           />
         </div>
+
+        <div style={{ ...labelStyle, justifyContent: 'space-between' }}>
+          <span>{t('backgroundOpacity')}: {Math.round(backgroundOpacity * 100)}%</span>
+          <input
+            type="range"
+            min={0}
+            max={100}
+            value={Math.round(backgroundOpacity * 100)}
+            onChange={(e) => handleBackgroundOpacityChange(Number(e.target.value) / 100)}
+            style={{ width: 100, cursor: 'pointer' }}
+          />
+        </div>
+
+        <label style={labelStyle}>
+          <input
+            type="checkbox"
+            checked={autoStartListening}
+            onChange={(e) => handleAutoStartListeningToggle(e.target.checked)}
+            style={checkboxStyle}
+          />
+          {t('autoStartListening')}
+        </label>
       </div>
 
       {isOverlay && (
