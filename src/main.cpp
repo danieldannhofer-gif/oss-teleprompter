@@ -11,11 +11,11 @@
 
 HWND g_mainWindow = nullptr;
 
-// Dev URL (Vite dev server) — change to embedded path for production
+// Dev URL (Vite dev server) in debug; embedded assets via virtual host in production
 #ifdef _DEBUG
     const wchar_t* DEV_URL = L"http://localhost:5173";
 #else
-    const wchar_t* DEV_URL = L"http://localhost:5173"; // TODO: embed frontend for production
+    const wchar_t* DEV_URL = L"https://appassets.local/index.html";
 #endif
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow) {
@@ -33,7 +33,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
     InitIPC(g_mainWindow);
 
     // Initialize WebView2
-    InitWebView(g_mainWindow, DEV_URL);
+    if (!InitWebView(g_mainWindow, DEV_URL)) {
+        return 1;
+    }
 
     // Message loop
     MSG msg = {};
