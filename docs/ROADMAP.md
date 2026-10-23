@@ -6,11 +6,10 @@ Core teleprompter with voice tracking. Target: ship an MSI installer.
 
 | Issue | Title | Status |
 |-------|-------|--------|
-| #3 | Fix CI workflow paths | In Progress |
-| #10 | Embed frontend for production | In Progress |
-| #5 | WebView2 runtime error handling | In Progress |
+| #10 | Embed frontend for production | Done |
+| #5 | WebView2 runtime error handling | Done |
 | #11 | Verify Windows build end-to-end | Pending (needs Windows) |
-| #7 | Cut v0.1.0 release | Pending (depends on above) |
+| #7 | Cut v0.1.0 release | Pending (depends on #11) |
 
 ## v0.2.0 — Polish & Script Management
 
@@ -18,7 +17,7 @@ Quality-of-life improvements for daily use.
 
 | Issue | Title | Status |
 |-------|-------|--------|
-| #12 | Expose all settings in SettingsPanel | In Progress |
+| #12 | Expose all settings in SettingsPanel | Done |
 | #6 | Script library — save & quick-reload | In Progress |
 | #8 | Script export | In Progress |
 | #9 | Accessibility — ARIA, keyboard nav, high-contrast | Backlog |
