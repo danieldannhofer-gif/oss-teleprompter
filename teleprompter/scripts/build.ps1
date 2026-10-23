@@ -58,6 +58,18 @@ try {
 } finally {
     Pop-Location
 }
+
+# Copy frontend dist to build output so the production exe can serve embedded assets
+$distSource = "$projectDir\frontend\dist"
+$distDest = "$projectDir\build\$buildType\dist"
+if (Test-Path $distSource) {
+    Write-Host "  Copying frontend assets to build output..."
+    Copy-Item -Path $distSource -Destination $distDest -Recurse -Force
+    Write-Host "  Frontend assets: build/$buildType/dist" -ForegroundColor Green
+} else {
+    Write-Host "  Warning: frontend/dist not found, skipping copy" -ForegroundColor Yellow
+}
+
 Write-Host "  C++ build OK" -ForegroundColor Green
 
 # --- Step 4: Download Whisper model ---

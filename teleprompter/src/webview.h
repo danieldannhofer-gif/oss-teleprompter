@@ -12,8 +12,8 @@
 
 using Microsoft::WRL::ComPtr;
 
-// Initialize WebView2 in the given window
-void InitWebView(HWND hwnd, const wchar_t* url);
+// Initialize WebView2 in the given window. Returns false if the WebView2 runtime is not installed.
+bool InitWebView(HWND hwnd, const wchar_t* url);
 // Resize WebView2 to fill the window
 void ResizeWebView(HWND hwnd);
 // Send a message to the web content (JavaScript)
