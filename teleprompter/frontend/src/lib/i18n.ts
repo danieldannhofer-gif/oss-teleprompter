@@ -38,6 +38,8 @@ export const locales: Record<Locale, Record<string, string>> = {
     displaySettings: 'Anzeige',
     showTimeline: 'Timeline anzeigen',
     fontSize: 'Schriftgröße',
+    backgroundOpacity: 'Hintergrund-Deckkraft',
+    autoStartListening: 'Sprachsteuerung automatisch starten beim Laden eines Skripts',
   },
   en: {
     appName: 'Teleprompter',
@@ -74,6 +76,8 @@ export const locales: Record<Locale, Record<string, string>> = {
     displaySettings: 'Display',
     showTimeline: 'Show Timeline',
     fontSize: 'Font Size',
+    backgroundOpacity: 'Background Opacity',
+    autoStartListening: 'Auto-start voice tracking when script is loaded',
   },
 };
 
