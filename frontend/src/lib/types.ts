@@ -43,6 +43,7 @@ export interface Settings {
   dockPosition: 'none' | 'top' | 'bottom';
   dockHeightPercent: number;
   showTimeline: boolean;
+  highContrast: boolean;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -59,4 +60,5 @@ export const DEFAULT_SETTINGS: Settings = {
   dockPosition: 'none',
   dockHeightPercent: 60,
   showTimeline: true,
+  highContrast: false,
 };

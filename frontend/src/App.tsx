@@ -5,6 +5,7 @@ import { usePrompter } from './hooks/usePrompter';
 import { useKeyboard } from './hooks/useKeyboard';
 import { useSettings } from './hooks/useSettings';
 import { t } from './lib/i18n';
+import { applyHighContrast } from './lib/accessibility';
 import { windowMessages } from './lib/webview';
 import { SettingsPanel } from './components/SettingsPanel';
 import { PrompterView } from './components/PrompterView';
@@ -44,6 +45,17 @@ function App() {
   });
 
   // Apply dock on mount
+  // Apply high contrast on mount
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem('teleprompter-settings');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        applyHighContrast(parsed.highContrast === true);
+      }
+    } catch { // ignore
+    }
+  }, []);
   useEffect(() => {
     if (dockPosition !== 'none') {
       const height = (() => {
@@ -116,6 +128,8 @@ function App() {
 
   return (
     <div
+      role="main"
+      aria-label="Teleprompter application"
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -161,6 +175,7 @@ function App() {
           <button
             onClick={() => handleDock(dockPosition === 'top' ? 'none' : 'top')}
             title="Dock to top (F3)"
+            aria-label="Dock window to top of screen"
             style={{
               padding: '6px 10px', fontSize: 13, cursor: 'pointer',
               background: dockPosition === 'top' ? '#2563eb' : '#333',
@@ -172,6 +187,7 @@ function App() {
 
           <button
             onClick={() => setShowEditor(true)}
+            aria-label="Import script"
             style={{
               padding: '6px 14px', fontSize: 13, cursor: 'pointer',
               background: '#2563eb', color: '#fff', border: 'none', borderRadius: 4,
@@ -182,6 +198,7 @@ function App() {
 
           <button
             onClick={toggleVoice}
+            aria-label={voice.isListening ? "Stop voice tracking" : "Start voice tracking"}
             disabled={prompter.lines.length === 0}
             style={{
               padding: '6px 14px', fontSize: 13,
@@ -196,6 +213,7 @@ function App() {
 
           <button
             onClick={() => prompter.togglePlay()}
+            aria-label={prompter.isPlaying ? "Pause" : "Play"}
             disabled={prompter.lines.length === 0}
             style={{
               padding: '6px 14px', fontSize: 13, cursor: 'pointer',
@@ -207,6 +225,8 @@ function App() {
 
           <button
             onClick={() => setShowSettings(!showSettings)}
+            aria-label="Toggle settings panel"
+            aria-expanded={showSettings}
             style={{
               padding: '6px 14px', fontSize: 13, cursor: 'pointer',
               background: '#333', color: '#fff', border: '1px solid #555', borderRadius: 4,
