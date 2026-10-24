@@ -3,6 +3,7 @@ import { useOverlay } from '../hooks/useOverlay';
 import { usePrompter } from '../hooks/usePrompter';
 import { windowMessages } from '../lib/webview';
 import { t } from '../lib/i18n';
+import { applyHighContrast } from '../lib/accessibility';
 
 interface SettingsPanelProps {
   overlay: ReturnType<typeof useOverlay>;
@@ -52,6 +53,9 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
   const [showTimeline, setShowTimeline] = useState<boolean>(
     () => loadSetting<boolean>('showTimeline', true)
   );
+  const [highContrast, setHighContrast] = useState<boolean>(
+    () => loadSetting<boolean>('highContrast', false)
+  );
   const [backgroundOpacity, setBackgroundOpacityState] = useState<number>(
     () => loadSetting<number>('backgroundOpacity', 0.85)
   );
@@ -98,6 +102,12 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
     saveSetting('showTimeline', show);
     // Dispatch event so App can react
     window.dispatchEvent(new CustomEvent('teleprompter:timelineToggle', { detail: { show } }));
+  };
+
+  const handleHighContrastToggle = (enabled: boolean) => {
+    setHighContrast(enabled);
+    saveSetting('highContrast', enabled);
+    applyHighContrast(enabled);
   };
 
   const handleBackgroundOpacityChange = (value: number) => {
@@ -218,6 +228,17 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
             style={checkboxStyle}
           />
           {t('showTimeline')}
+        </label>
+
+        <label style={labelStyle}>
+          <input
+            type="checkbox"
+            checked={highContrast}
+            onChange={(e) => handleHighContrastToggle(e.target.checked)}
+            style={checkboxStyle}
+            aria-label="Toggle high contrast mode"
+          />
+          High contrast mode
         </label>
 
         <div style={{ ...labelStyle, justifyContent: 'space-between' }}>
