@@ -56,6 +56,12 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
   const [highContrast, setHighContrast] = useState<boolean>(
     () => loadSetting<boolean>('highContrast', false)
   );
+  const [remoteEnabled, setRemoteEnabled] = useState<boolean>(
+    () => loadSetting<boolean>('remoteEnabled', false)
+  );
+  const [remotePin, setRemotePin] = useState<string>(
+    () => loadSetting<string>('remotePin', '')
+  );
   const [backgroundOpacity, setBackgroundOpacityState] = useState<number>(
     () => loadSetting<number>('backgroundOpacity', 0.85)
   );
@@ -281,6 +287,51 @@ export function SettingsPanel({ overlay }: SettingsPanelProps) {
           {t('overlayActive')}
         </p>
       )}
+
+      {/* Remote control settings */}
+      <div style={sectionStyle}>
+        <h4 style={{ margin: '0 0 12px 0', fontSize: 13, color: '#aaa' }}>
+          Remote Control
+        </h4>
+        <label style={labelStyle}>
+          <input
+            type="checkbox"
+            checked={remoteEnabled}
+            onChange={(e) => {
+              setRemoteEnabled(e.target.checked);
+              saveSetting('remoteEnabled', e.target.checked);
+            }}
+            style={checkboxStyle}
+            aria-label="Enable remote control"
+          />
+          Enable phone remote
+        </label>
+        {remoteEnabled && (
+          <div style={{ ...labelStyle, marginTop: 8 }}>
+            <span>PIN:</span>
+            <input
+              type="text"
+              value={remotePin}
+              onChange={(e) => {
+                setRemotePin(e.target.value);
+                saveSetting('remotePin', e.target.value);
+              }}
+              placeholder="Optional"
+              maxLength={6}
+              style={{
+                background: '#222', color: '#fff', border: '1px solid #444',
+                borderRadius: 4, padding: '4px 8px', width: 80, fontSize: 13,
+              }}
+              aria-label="Remote control PIN code"
+            />
+          </div>
+        )}
+        {remoteEnabled && (
+          <div style={{ fontSize: 11, color: '#666', marginTop: 4 }}>
+            Connect from phone: http://&lt;this-pc-ip&gt;:8765/remote
+          </div>
+        )}
+      </div>
     </div>
   );
 }
