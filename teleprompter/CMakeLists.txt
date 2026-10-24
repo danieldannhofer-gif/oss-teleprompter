@@ -110,6 +110,14 @@ if(BUILD_TESTS)
     target_include_directories(matcher_test PRIVATE src)
     target_link_libraries(matcher_test PRIVATE GTest::gtest_main)
     add_test(NAME matcher_test COMMAND matcher_test)
+
+    # IPC parsing test (Windows-only — tests message format detection logic)
+    if(WIN32)
+        add_executable(ipc_test tests/cpp/ipc_test.cpp)
+        target_include_directories(ipc_test PRIVATE src)
+        target_link_libraries(ipc_test PRIVATE GTest::gtest_main)
+        add_test(NAME ipc_test COMMAND ipc_test)
+    endif()
 endif()
 
 # --- Post-build: copy WebView2 loader DLL ---
