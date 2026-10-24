@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Teleprompter Remote</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, sans-serif; background: #111; color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 20px; }
+h1 { font-size: 14px; color: #888; }
+.controls { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+button { width: 80px; height: 80px; border-radius: 50%; border: none; font-size: 24px; cursor: pointer; background: #333; color: #fff; }
+button:active { transform: scale(0.95); }
+button.play { background: #16a34a; }
+button.pause { background: #dc2626; }
+button.nav { background: #2563eb; width: 60px; height: 60px; font-size: 18px; }
+.progress { width: 80%; height: 8px; background: #333; border-radius: 4px; overflow: hidden; }
+.progress-bar { height: 100%; background: #16a34a; transition: width 0.3s; }
+.section { font-size: 14px; color: #aaa; }
+.status { font-size: 12px; color: #666; }
+</style>
+</head>
+<body>
+<h1>Teleprompter Remote</h1>
+<div class="section" id="section">No section</div>
+<div class="controls">
+<button class="nav" onclick="send('prevSection')">&#x25C0;</button>
+<button id="playBtn" class="play" onclick="togglePlay()">&#x25B6;</button>
+<button class="nav" onclick="send('nextSection')">&#x25B6;</button>
+</div>
+<div class="controls">
+<button class="nav" onclick="send('speedDown')">&#x2796;</button>
+<button class="nav" onclick="send('speedUp')">&#x2795;</button>
+</div>
+<div class="progress"><div class="progress-bar" id="progress" style="width:0%"></div></div>
+<div class="status" id="status">Connecting...</div>
+<script>
+let playing = false;
+const evtSource = new EventSource('/api/state');
+evtSource.onmessage = (e) => {
+  const state = JSON.parse(e.data);
+  playing = state.isPlaying;
+  document.getElementById('playBtn').className = playing ? 'pause' : 'play';
+  document.getElementById('playBtn').innerHTML = playing ? '&#x23F8;' : '&#x25B6;';
+  document.getElementById('section').textContent = state.currentSection || 'No section';
+  document.getElementById('progress').style.width = (state.scrollPosition * 100) + '%';
+  document.getElementById('status').textContent = 'Connected';
+};
+evtSource.onerror = () => { document.getElementById('status').textContent = 'Disconnected'; };
+function send(cmd) { fetch('/api/command', { method: 'POST', body: JSON.stringify({ command: cmd }) }); }
+function togglePlay() { send(playing ? 'pause' : 'play'); }
+</script>
+</body>
+</html>

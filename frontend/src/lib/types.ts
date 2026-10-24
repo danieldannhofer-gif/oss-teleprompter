@@ -44,6 +44,8 @@ export interface Settings {
   dockHeightPercent: number;
   showTimeline: boolean;
   highContrast: boolean;
+  remoteEnabled: boolean;
+  remotePin: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -61,4 +63,6 @@ export const DEFAULT_SETTINGS: Settings = {
   dockHeightPercent: 60,
   showTimeline: true,
   highContrast: false,
+  remoteEnabled: false,
+  remotePin: "",
 };

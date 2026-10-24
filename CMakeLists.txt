@@ -17,6 +17,7 @@ set(SOURCES
     src/main.cpp
     src/window.cpp
     src/webview.cpp
+    src/remote/server.cpp
     src/ipc.cpp
     src/speech/audio.cpp
     src/speech/model.cpp
@@ -61,7 +62,7 @@ target_link_directories(Teleprompter PRIVATE
     "${WEBVIEW2_DIR}/build/native/x64"
 )
 
-target_link_libraries(Teleprompter PRIVATE
+target_link_libraries(Teleprompter PRIVATE ws2_32 iphlpapi
     WebView2LoaderStatic
     ws2_32
     comctl32
@@ -77,7 +78,7 @@ set(WHISPER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_SERVER OFF CACHE BOOL "" FORCE)
 add_subdirectory(third_party/whisper.cpp)
-target_link_libraries(Teleprompter PRIVATE whisper)
+target_link_libraries(Teleprompter PRIVATE ws2_32 iphlpapi whisper)
 target_include_directories(Teleprompter PRIVATE third_party/whisper.cpp/include third_party/whisper.cpp/ggml/include)
 
 # --- Google Test (for C++ unit tests) ---
