@@ -25,6 +25,9 @@ AudioCapture::AudioCapture() {
 
 AudioCapture::~AudioCapture() {
     Stop();
+    // Release COM objects before CoUninitialize(); otherwise the ComPtr
+    // members would call Release() after COM has unloaded the server DLL.
+    m_deviceEnumerator.Reset();
     CoUninitialize();
 }
 
