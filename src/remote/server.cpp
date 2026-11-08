@@ -213,3 +213,84 @@ void RemoteServer::Impl::HandleClient(SOCKET clientSocket) {
         {
             std::lock_guard<std::mutex> lock(clientsMutex);
          
+            clients.push_back(clientSocket);
+        }
+        // Send the current state immediately; the socket stays open for
+        // later BroadcastState() calls.
+        if (stateCb) {
+            std::string initial = "data: " + stateCb() + "\n\n";
+            send(clientSocket, initial.c_str(), static_cast<int>(initial.size()), 0);
+        }
+    }
+    else if (path == "/api/command" && method == "POST") {
+        // Body format: {"command":"play"}
+        std::string command;
+        size_t bodyStart = request.find("\r\n\r\n");
+        if (bodyStart != std::string::npos) {
+            std::string body = request.substr(bodyStart + 4);
+            const std::string key = "\"command\"";
+            size_t k = body.find(key);
+            if (k != std::string::npos) {
+                size_t q1 = body.find('"', body.find(':', k + key.size()) + 1);
+                size_t q2 = (q1 == std::string::npos) ? q1 : body.find('"', q1 + 1);
+                if (q1 != std::string::npos && q2 != std::string::npos) {
+                    command = body.substr(q1 + 1, q2 - q1 - 1);
+                }
+            }
+        }
+
+        static const char* allowed[] = {"play", "pause", "speedUp", "speedDown", "prevSection", "nextSection"};
+        bool valid = std::any_of(std::begin(allowed), std::end(allowed),
+                                 [&](const char* c) { return command == c; });
+
+        std::string resp;
+        if (valid) {
+            if (commandCb) commandCb(command);
+            resp = "HTTP/1.1 204 No Content\r\nContent-Length: 0\r\n\r\n";
+        } else {
+            resp = "HTTP/1.1 400 Bad Request\r\nContent-Length: 0\r\n\r\n";
+        }
+        send(clientSocket, resp.c_str(), static_cast<int>(resp.size()), 0);
+        closesocket(clientSocket);
+    }
+    else {
+        std::string resp = "HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n";
+        send(clientSocket, resp.c_str(), static_cast<int>(resp.size()), 0);
+        closesocket(clientSocket);
+    }
+}
+
+void RemoteServer::Impl::BroadcastToClients(const std::string& message) {
+    std::lock_guard<std::mutex> lock(clientsMutex);
+    clients.erase(std::remove_if(clients.begin(), clients.end(), [&](SOCKET c) {
+        if (send(c, message.c_str(), static_cast<int>(message.size()), 0) == SOCKET_ERROR) {
+            closesocket(c);
+            return true; // drop disconnected remote
+        }
+        return false;
+    }), clients.end());
+}
+
+std::string RemoteServer::Impl::GetLocalIPAddress() {
+    // First non-loopback IPv4 address of this host; falls back to loopback.
+    char hostname[256] = {};
+    if (gethostname(hostname, sizeof(hostname)) != 0) return "127.0.0.1";
+
+    addrinfo hints{};
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    addrinfo* result = nullptr;
+    if (getaddrinfo(hostname, nullptr, &hints, &result) != 0) return "127.0.0.1";
+
+    std::string ip = "127.0.0.1";
+    for (addrinfo* p = result; p != nullptr; p = p->ai_next) {
+        char buf[INET_ADDRSTRLEN] = {};
+        auto* sin = reinterpret_cast<sockaddr_in*>(p->ai_addr);
+        if (inet_ntop(AF_INET, &sin->sin_addr, buf, sizeof(buf)) && std::string(buf).rfind("127.", 0) != 0) {
+            ip = buf;
+            break;
+        }
+    }
+    freeaddrinfo(result);
+    return ip;
+}

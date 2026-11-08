@@ -1,5 +1,6 @@
 #include "window.h"
 #include <windows.h>
+#include <string>
 
 static HWND g_hwnd = nullptr;
 
