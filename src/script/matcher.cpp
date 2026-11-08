@@ -3,6 +3,17 @@
 #include <algorithm>
 #include <cmath>
 
+namespace {
+// True if every word of `needle` appears in `haystack` in the same order.
+bool isSubsequence(const std::vector<std::string>& needle, const std::vector<std::string>& haystack) {
+    size_t j = 0;
+    for (const auto& word : haystack) {
+        if (j < needle.size() && word == needle[j]) j++;
+    }
+    return j == needle.size();
+}
+} // namespace
+
 ScriptMatcher::ScriptMatcher(const std::vector<std::string>& lines)
     : m_lines(lines)
 {
@@ -69,16 +80,25 @@ MatchResult ScriptMatcher::FindBestMatch(const std::string& normalizedText) cons
         // Compute similarity using multiple metrics
         float sim1 = similarity(normalizedText, line);
 
-        // Also check if transcript is a substring of the line (or vice versa)
+        auto lineTokens = tokenize(line);
+        const float lineWordCount = static_cast<float>(lineTokens.size());
+        const float textWordCount = static_cast<float>(transcriptTokens.size());
+
+        // Keep in sync with frontend/src/lib/matcher.ts.
+        // A contiguous partial match is a strong on-script signal: score by
+        // word coverage on top of a 0.65 base.
         float substringScore = 0.0f;
         if (line.find(normalizedText) != std::string::npos) {
-            substringScore = static_cast<float>(normalizedText.size()) / static_cast<float>(line.size());
+            substringScore = 0.65f + 0.35f * (textWordCount / lineWordCount);
         } else if (normalizedText.find(line) != std::string::npos) {
-            substringScore = static_cast<float>(line.size()) / static_cast<float>(normalizedText.size());
+            substringScore = 0.65f + 0.35f * (lineWordCount / textWordCount);
+        } else if (transcriptTokens.size() >= 2 && isSubsequence(transcriptTokens, lineTokens)) {
+            // Speaker skipped filler words: same idea, slightly lower base so
+            // contiguous matches still rank higher.
+            substringScore = 0.6f + 0.35f * (textWordCount / lineWordCount);
         }
 
         // Token-based Jaccard similarity
-        auto lineTokens = tokenize(line);
         float jacScore = jaccardSimilarity(transcriptTokens, lineTokens);
 
         // Combined score (weighted)
