@@ -25,6 +25,9 @@ AudioCapture::AudioCapture() {
 
 AudioCapture::~AudioCapture() {
     Stop();
+    // Release COM objects before CoUninitialize(); otherwise the ComPtr
+    // members would call Release() after COM has unloaded the server DLL.
+    m_deviceEnumerator.Reset();
     CoUninitialize();
 }
 
@@ -200,7 +203,10 @@ void AudioCapture::SetCallback(AudioCallback callback) {
 
 void AudioCapture::CaptureThreadProc() {
     // Set thread priority to real-time for audio
-    HANDLE hTask = AvSetMmThreadCharacteristics(L"Pro Audio", nullptr);
+    // TaskIndex is a required in/out parameter (0 on first call); passing
+    // nullptr makes avrt write through a null pointer.
+    DWORD taskIndex = 0;
+    HANDLE hTask = AvSetMmThreadCharacteristics(L"Pro Audio", &taskIndex);
 
     std::vector<float> buffer;
 

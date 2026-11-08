@@ -36,3 +36,11 @@ TEST(AudioCapture, CallbackReceivesData) {
         GTEST_SKIP() << "No microphone available";
     }
 }
+
+// Regression: on machines without a microphone Start() fails and the object
+// is destroyed right away. The destructor must release COM objects before
+// CoUninitialize(), or Release() calls into an unloaded COM server.
+TEST(AudioCapture, DestroysCleanlyWithoutStart) {
+    { AudioCapture capture; }
+    SUCCEED();
+}

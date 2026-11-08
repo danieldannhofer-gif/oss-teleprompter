@@ -5,6 +5,9 @@
 #ifndef _UNICODE
 #define _UNICODE
 #endif
+// winsock2.h must come before windows.h, otherwise windows.h pulls in the
+// legacy winsock.h and ws2tcpip.h in server.cpp fails to compile.
+#include <winsock2.h>
 #include <windows.h>
 #include <string>
 #include <functional>

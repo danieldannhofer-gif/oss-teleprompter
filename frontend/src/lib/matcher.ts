@@ -59,6 +59,15 @@ function jaccard(a: string[], b: string[]): number {
   return union === 0 ? 0 : intersection / union;
 }
 
+// True if every word of `needle` appears in `haystack` in the same order.
+function isSubsequence(needle: string[], haystack: string[]): boolean {
+  let j = 0;
+  for (const word of haystack) {
+    if (j < needle.length && word === needle[j]) j++;
+  }
+  return j === needle.length;
+}
+
 const MAX_RECENT_WORDS = 50;
 const DEFAULT_THRESHOLD = 0.7;
 
@@ -131,6 +140,17 @@ export class ScriptMatcher {
         const textWords = tokenize(text);
         const coverage = lineWords.length / textWords.length;
         substringScore = 0.65 + 0.35 * coverage;
+      }
+
+      if (substringScore === 0) {
+        // Speakers often skip filler words. If the transcript's words appear
+        // in the line in the same order, score like a contiguous match but
+        // with a slightly lower base so contiguous matches still rank higher.
+        const lineWords = tokenize(line);
+        const textWords = tokenize(text);
+        if (textWords.length >= 2 && isSubsequence(textWords, lineWords)) {
+          substringScore = 0.6 + 0.35 * (textWords.length / lineWords.length);
+        }
       }
 
       const lineTokens = tokenize(line);

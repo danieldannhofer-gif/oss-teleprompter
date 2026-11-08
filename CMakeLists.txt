@@ -74,6 +74,9 @@ target_link_libraries(Teleprompter PRIVATE ws2_32 iphlpapi
 )
 
 # --- Whisper.cpp ---
+# Link whisper/ggml (and gtest) statically: the app and the MSI ship only
+# Teleprompter.exe + WebView2Loader.dll, so shared libs would fail to load.
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(WHISPER_BUILD_SERVER OFF CACHE BOOL "" FORCE)

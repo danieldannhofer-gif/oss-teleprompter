@@ -36,6 +36,25 @@ describe('ScriptMatcher', () => {
     expect(result.lineIndex).toBe(0);
   });
 
+  test('matches when the speaker skips words (in-order subsequence)', () => {
+    const m = new ScriptMatcher(['Guten Tag und herzlich willkommen']);
+    const result = m.match('Guten Tag willkommen');
+    expect(result.type).toBe('OnScript');
+    expect(result.lineIndex).toBe(0);
+  });
+
+  test('skipped-word matching ranks below a contiguous match', () => {
+    const contiguous = new ScriptMatcher(['Guten Tag und herzlich willkommen']).match('Guten Tag und');
+    const skipped = new ScriptMatcher(['Guten Tag und herzlich willkommen']).match('Guten Tag herzlich');
+    expect(skipped.confidence).toBeLessThan(contiguous.confidence);
+  });
+
+  test('two scattered common words in a long line stay OffScript', () => {
+    const m = new ScriptMatcher(['and then we looked at the numbers for the third quarter in detail']);
+    const result = m.match('and detail');
+    expect(result.type).toBe('OffScript');
+  });
+
   test('case insensitive matching', () => {
     const m = new ScriptMatcher(['Hello World']);
     const result = m.match('hello world');

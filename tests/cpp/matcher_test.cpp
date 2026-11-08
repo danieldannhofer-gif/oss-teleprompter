@@ -66,3 +66,15 @@ TEST(Matcher, EmptyTranscript) {
     auto result = m.Match("");
     EXPECT_EQ(result.type, MatchType::OffScript);
 }
+
+TEST(Matcher, SkippedWordsRankBelowContiguous) {
+    auto contiguous = ScriptMatcher({"Guten Tag und herzlich willkommen"}).Match("Guten Tag und");
+    auto skipped = ScriptMatcher({"Guten Tag und herzlich willkommen"}).Match("Guten Tag herzlich");
+    EXPECT_LT(skipped.confidence, contiguous.confidence);
+}
+
+TEST(Matcher, ScatteredCommonWordsStayOffScript) {
+    ScriptMatcher m({"and then we looked at the numbers for the third quarter in detail"});
+    auto result = m.Match("and detail");
+    EXPECT_EQ(result.type, MatchType::OffScript);
+}
